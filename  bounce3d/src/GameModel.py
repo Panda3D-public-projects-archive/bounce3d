@@ -29,6 +29,7 @@ from pandac.PandaModules import DirectionalLight
 
 from Ball import Ball
 from Level import Level
+from Coin import Coin
 
 class GameModel:
 	''' Represents the world data. TODO: separate physics from this class'''
@@ -46,9 +47,15 @@ class GameModel:
 		self.ball = Ball(self.world, self.space, "Johannes")
 		self.kentta = Level(self.space)
 		
-		#self.addBox()
-		#self.addPlane()
-		#self.initEnvironment()
+		# a set of coins to be collected
+		self.coins = []
+		self.coins.append( Coin(self.world, self.space, pos = (0,10,6) ) )
+		self.coins.append( Coin(self.world, self.space, pos = (0,5,6) ) )
+		
+		# some elevator that are moving
+		#self.addGround( pos = (0,0,-10 ) )
+		#self.addGround( pos = (0,5,-5 ) )
+		#self.addGround( pos = (0,10,0 ) )
 		
 		# Set the camera position
 		base.disableMouse()
@@ -62,82 +69,7 @@ class GameModel:
 	def reset(self):
 		''' not implemented '''
 		pass
-		
-	"""
-	def initEnvironment(self):
-		environ = loader.loadModel("models/environment")
-		environ.reparentTo(render)
-		environ.setScale(0.4, 0.4, 0.4)
-		environ.setPos(-8, 20, 0)
-	"""
-	
-	"""
-	def initBall(self):		
-		# physical model
-		self.body = OdeBody(self.world)
-		M = OdeMass()
-		# Densities:
-		# 1000 kg / m^3 = water
-		# 11340 kg / m^3 = lead
-		M.setSphere( density = 4000, radius = 0.5 )
-		self.body.setMass(M)
-		self.body.setPosition(0,0,5)
-		
-		# rendering model
-		self.ball = loader.loadModel("smiley")
-		self.ball.reparentTo(render)
-		self.ball.setScale( 1.0, 1.0, 1.0 )
-		self.ball.setColor(0.5, 0.5, 0.5, 1)		
-		self.ball.setPos( self.body.getPosition() ) # only initial
-		
-		# Collision Sphere
-		geom = OdeSphereGeom( self.space, 1 )
-		#geom.setCollideBits( GameModel.COLLIDE_BITS )
-		#geom.setCategoryBits( GameModel.CATEGORY_BITS )
-		# This will automatically reposition the geometry with regard
-		# to the position of the related body in the OdeWorld.		
-		geom.setBody(self.body) 
-	"""
-	"""
-	def addBox(self):
-		self.box = loader.loadModel("box")
-		self.box.reparentTo(render)
-		# Make sure its center is at 0, 0, 0 like OdeBoxGeom
-		self.box.setPos( 0, 3, 6)
-		self.box.setScale( 1.0, 1.0, 1.0 )
-		self.box.setHpr( 0, 50, 0 )
-		
-		# define mass
-		mass = OdeMass()
-		mass.setBox( 50, 1.0, 1.0, 1.0)
-		
-		self.boxBody = OdeBody( self.world )
-		self.boxBody.setPosition( self.box.getPos(render) )
-		self.boxBody.setQuaternion( self.box.getQuat(render) )
-		self.boxBody.setMass( mass )
-		
-		geom = OdeBoxGeom( self.space, 1.0, 1.0, 1.0)
-		#geom.setCollideBits( GameModel.COLLIDE_BITS )
-		#geom.setCategoryBits( GameModel.CATEGORY_BITS )
-		geom.setBody( self.boxBody )
-	
-	def addPlane(self):
-		# http://www.panda3d.org/apiref.php?page=CardMaker
-		cm = CardMaker("groud")
-		cm.setFrame( -20, 20, -20, 20)
 
-		ground = render.attachNewNode( cm.generate() )
-		ground.setPos(0,0,0)
-		ground.lookAt(0,0,-1)
-		ground.setColor(0,0,1.0,1)
-		
-		# http://www.ode.org/ode-latest-userguide.html#sec_10_7_3
-		geom = OdePlaneGeom( self.space, Vec4( 0, 0, 1, 0) )
-		#geom.setCollideBits( BitMask32( 0x00000003 ) )
-		#geom.setCategoryBits( BitMask32( 0x00000004 ) )
-	
-	"""
-	
 	def setLights(self):
 		''' @author latenssi '''
 		# Ambient Light
@@ -188,6 +120,19 @@ class GameModel:
 		space.setAutoCollideWorld(world)
 		space.setAutoCollideJointGroup( joints )
 		return space	
+	
+	def addGround(self, pos):
+		'''move this somewhere else'''
+		lx,ly,lz = 5,5,1   # dimension
+		px,py,pz = pos # position
+	
+		self.ground = loader.loadModel("box")
+		self.ground.reparentTo(render)
+		self.ground.setScale( lx, ly, lz )
+		self.ground.setPos( px -lx/2, py -ly/2, pz -lz/2)
+		
+		geom = OdeBoxGeom( self.space, lx, ly, lz)
+		geom.setPosition( px, py, pz)
 		
 	def turnGravityTask(self):
 		''''''
@@ -208,8 +153,8 @@ class GameModel:
 		''' Update objects after one physics iteration '''
 		self.ball.updateModelNode()
 
-		#self.box.setPos( render, self.boxBody.getPosition() )
-		#self.box.setQuat(render, Quat(self.boxBody.getQuaternion() ) )
+		for coin in self.coins:
+			coin.updateModelNode()
 		
 		x,y,z = self.ball.getPosition()
 		base.camera.lookAt( x,y,z+1 )

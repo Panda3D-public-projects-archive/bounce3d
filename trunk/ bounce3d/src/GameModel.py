@@ -38,38 +38,43 @@ class GameModel:
 	CATEGORY_BITS = BitMask32( 0x00000001 )
 	
 	def __init__(self):
+		base.disableMouse()
+		base.camera.lookAt(0, 0, 6)
+		base.setBackgroundColor(0,0,0)
+		
+		self.level2()
+	
+	def reset(self):
 		self.world = self.createWorld()
 		self.contactgroup = OdeJointGroup()
 		self.space = self.createCollisionSpace(self.world, self.contactgroup)
 		self.space.setCollisionEvent("ode-collision")
 		base.accept("ode-collision", self.onCollision)
-		
-		self.ball = Ball(self.world, self.space, "Johannes")
-		self.kentta = Level(self.space)
-		
-		# a set of coins to be collected
-		self.coins = []
-		self.coins.append( Coin(self.world, self.space, pos = (0,10,6) ) )
-		self.coins.append( Coin(self.world, self.space, pos = (0,5,6) ) )
-		
-		# some elevator that are moving
-		#self.addGround( pos = (0,0,-10 ) )
-		#self.addGround( pos = (0,5,-5 ) )
-		#self.addGround( pos = (0,10,0 ) )
-		
-		# Set the camera position
-		base.disableMouse()
-		base.camera.setPos(20, 0, 2)
-		base.camera.lookAt(0, 0, 6)
-		
+	
 		self.setLights()
 		
 		self.counter = 0
+		self.coins = []
+		
+		self.ball = Ball(self.world, self.space, "Johannes")
 	
-	def reset(self):
-		''' not implemented '''
-		pass
+	def level1(self):
+		self.reset()
+		self.kentta = Level(self.space)
+		base.camera.setPos(20, 0, 2)
 
+	def level2(self):
+		self.reset()
+		self.addGround( pos = (0,0,-10 ) )
+		self.addGround( pos = (0,5,-5 ) )
+		self.addGround( pos = (0,10,0 ) )
+		
+		# a set of coins to be collected
+		self.coins.append( Coin(self.world, self.space, pos = (0,10,6) ) )
+		self.coins.append( Coin(self.world, self.space, pos = (0,5,6) ) )
+		
+		base.camera.setPos(40, 0, 2)
+		
 	def setLights(self):
 		''' @author latenssi '''
 		# Ambient Light
@@ -106,9 +111,8 @@ class GameModel:
 		world.initSurfaceTable(num_surfaces = 1)
 		# http://www.panda3d.org/apiref.php?page=OdeWorld#setSurfaceEntry
 		# http://www.panda3d.org/wiki/index.php/Collision_Detection_with_ODE
-		world.setSurfaceEntry(pos1 = 0, pos2 = 0, mu = 15000, 
-			bounce = 0.0, bounce_vel = 9.1, soft_erp = 0.9,
-			soft_cfm = 0.00001, slip = 0.0, dampen = 0.002)
+		# (surfaceId1, surfaceId2, mu, bounce, bounce_vel, soft_erp, soft_cfm, slip, dampen)
+		world.setSurfaceEntry(0, 0, 0.8, 0.0, 9.1, 0.9, 0.00001, 100.0, 0.002)
 		return world
 
 	def createCollisionSpace(self, world, joints):
@@ -123,13 +127,19 @@ class GameModel:
 	
 	def addGround(self, pos):
 		'''move this somewhere else'''
-		lx,ly,lz = 5,5,1   # dimension
+		
+		# Hauska Bugi: kirjoita 1.0 eika 1
+		lx,ly,lz = 5,5,1.0   # dimension
 		px,py,pz = pos # position
 	
-		self.ground = loader.loadModel("box")
-		self.ground.reparentTo(render)
+		self.ground = loader.loadModel("box")		
 		self.ground.setScale( lx, ly, lz )
 		self.ground.setPos( px -lx/2, py -ly/2, pz -lz/2)
+		
+		self.ground.flattenLight()
+		self.ground.reparentTo(render)
+		
+		
 		
 		geom = OdeBoxGeom( self.space, lx, ly, lz)
 		geom.setPosition( px, py, pz)

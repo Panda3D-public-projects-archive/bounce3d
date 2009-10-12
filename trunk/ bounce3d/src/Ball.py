@@ -1,11 +1,6 @@
 
-from pandac.PandaModules import Quat
-
-from pandac.PandaModules import OdeBody
-from pandac.PandaModules import OdeMass
-
-from pandac.PandaModules import OdeSphereGeom
-from pandac.PandaModules import BitMask32
+from pandac.PandaModules import (
+	Quat,OdeBody, OdeMass, OdeSphereGeom, BitMask32)
 
 class Ball:
 	
@@ -17,6 +12,8 @@ class Ball:
 	
 	BALL_BODY_MASS_WEIGHT = 1000
 	BALL_BODY_MASS_RADIUS = 1
+	FORCE = 90000
+	TORQUE = 3000
 	
 	def __init__(
 	self, 
@@ -77,11 +74,11 @@ class Ball:
 	def updateModelNode(self):
 		''' Update objects after one physics iteration '''
 		if self.moveLeft:
-			self.ballBody.setForce( y = -10000, x = 0, z = 0 )
-			self.ballBody.setTorque( y = -1000, x = 0, z = 0 )	
+			self.ballBody.setForce( y = -Ball.FORCE, x = 0, z = 0 )
+			self.ballBody.setTorque( y = -Ball.TORQUE, x = 0, z = 0 )	
 		elif self.moveRight:
-			self.ballBody.setForce( y = 10000, x = 0, z = 0 )
-			self.ballBody.setTorque( y = 1000, x = 0, z = 0 )		
+			self.ballBody.setForce( y = Ball.FORCE, x = 0, z = 0 )
+			self.ballBody.setTorque( y = Ball.TORQUE, x = 0, z = 0 )		
 			
 		# Set the new position
 		self.modelNode.setPos( render, self.ballBody.getPosition() )

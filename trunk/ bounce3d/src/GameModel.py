@@ -28,6 +28,7 @@ from pandac.PandaModules import AmbientLight
 from pandac.PandaModules import DirectionalLight
 
 from Ball import Ball
+from Level import Level
 
 class GameModel:
 	''' Represents the world data. TODO: separate physics from this class'''
@@ -43,14 +44,16 @@ class GameModel:
 		base.accept("ode-collision", self.onCollision)
 		
 		self.ball = Ball(self.world, self.space, "Johannes")
-		self.addBox()
-		self.addPlane()
+		self.kentta = Level(self.space)
+		
+		#self.addBox()
+		#self.addPlane()
 		#self.initEnvironment()
 		
 		# Set the camera position
 		base.disableMouse()
-		base.camera.setPos(40, 0, 1)
-		base.camera.lookAt(0, 0, 5)
+		base.camera.setPos(20, 0, 2)
+		base.camera.lookAt(0, 0, 6)
 		
 		self.setLights()
 		
@@ -59,12 +62,14 @@ class GameModel:
 	def reset(self):
 		''' not implemented '''
 		pass
-	
+		
+	"""
 	def initEnvironment(self):
 		environ = loader.loadModel("models/environment")
 		environ.reparentTo(render)
 		environ.setScale(0.4, 0.4, 0.4)
 		environ.setPos(-8, 20, 0)
+	"""
 	
 	"""
 	def initBall(self):		
@@ -93,7 +98,7 @@ class GameModel:
 		# to the position of the related body in the OdeWorld.		
 		geom.setBody(self.body) 
 	"""
-	
+	"""
 	def addBox(self):
 		self.box = loader.loadModel("box")
 		self.box.reparentTo(render)
@@ -130,7 +135,9 @@ class GameModel:
 		geom = OdePlaneGeom( self.space, Vec4( 0, 0, 1, 0) )
 		#geom.setCollideBits( BitMask32( 0x00000003 ) )
 		#geom.setCategoryBits( BitMask32( 0x00000004 ) )
-		
+	
+	"""
+	
 	def setLights(self):
 		''' @author latenssi '''
 		# Ambient Light
@@ -141,18 +148,18 @@ class GameModel:
 
 		# Directional light 01
 		directionalLight = DirectionalLight( "directionalLight" )
-		directionalLight.setColor( Vec4( 0, 0, 0, 1 ) )
+		directionalLight.setColor( Vec4( 1, 1, 1, 1 ) )
 		directionalLightNP = render.attachNewNode( directionalLight.upcastToPandaNode() )
-		directionalLightNP.setPos(-10,0,5)
+		directionalLightNP.setPos(10,-20,20)
 		directionalLightNP.lookAt(0,0,0)
 		render.setLight(directionalLightNP)
 
 		# Directional light 02
 		directionalLight = DirectionalLight( "directionalLight" )
-		directionalLight.setColor( Vec4( 1, 0.5, 0.3, 1 ) )
+		directionalLight.setColor( Vec4( 1, 1, 1, 1 ) )
 		directionalLightNP = render.attachNewNode( directionalLight.upcastToPandaNode() )
 		directionalLightNP.lookAt(0,0,0)
-		directionalLightNP.setPos(10,0,-5)
+		directionalLightNP.setPos(10,20,20)
 		render.setLight(directionalLightNP)
 		
 	def createWorld(self):
@@ -201,11 +208,11 @@ class GameModel:
 		''' Update objects after one physics iteration '''
 		self.ball.updateModelNode()
 
-		self.box.setPos( render, self.boxBody.getPosition() )
-		self.box.setQuat(render, Quat(self.boxBody.getQuaternion() ) )
+		#self.box.setPos( render, self.boxBody.getPosition() )
+		#self.box.setQuat(render, Quat(self.boxBody.getQuaternion() ) )
 		
 		x,y,z = self.ball.getPosition()
-		base.camera.lookAt( x,y,z )
+		base.camera.lookAt( x,y,z+1 )
 		# alter only y-axis
 		cx,cy,cz = base.camera.getPos()
 		base.camera.setPos( cx, y, cz )

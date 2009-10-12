@@ -4,7 +4,7 @@
   "maya2egg2009 -p -a none -cs y-up -uo cm -trans all -o C:/Users/Lauri/Documents/maya/projects/Bounce3d/scenes/paahahmo.egg C:/Users/Lauri/Documents/maya/projects/Bounce3d/scenes/paahahmo_temp.mb"
 }
 <Texture> phong2SG {
-  "../sourceimages/up_arrows.tif"
+  "../media/up_arrows.tif"
   <Scalar> format { rgb }
   <Scalar> wrapu { repeat }
   <Scalar> wrapv { repeat }

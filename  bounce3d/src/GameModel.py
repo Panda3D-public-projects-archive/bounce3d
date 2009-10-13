@@ -22,6 +22,7 @@ from pandac.PandaModules import OdePlaneGeom
 
 from pandac.PandaModules import BitMask32
 from pandac.PandaModules import CardMaker
+from pandac.PandaModules import OdePlane2dJoint
 
 # lights
 from pandac.PandaModules import AmbientLight
@@ -57,6 +58,9 @@ class GameModel:
 		self.setLights()
 		
 		self.ball = Ball(self.world, self.space, "Johanneksen pallo", pos=(0,0,10))	
+		#ballBody = self.ball.getBody()
+		#ballJoint = OdePlane2dJoint(self.world)
+		#ballJoint.attachBody(ballBody, 1)
 		self.kentta = Level(self.space)		
 		self.player = Player("Johannes")
 		

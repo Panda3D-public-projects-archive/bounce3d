@@ -1,6 +1,7 @@
 
 from pandac.PandaModules import (
-	Quat,OdeBody, OdeMass, OdeSphereGeom, BitMask32)
+	Quat,OdeBody, OdeMass, OdeSphereGeom, BitMask32)	
+from pandac.PandaModules import OdePlane2dJoint
 
 class Ball:
 	
@@ -87,11 +88,36 @@ class Ball:
 		elif self.moveRight:
 			self.ballBody.setForce( y = Ball.FORCE, x = 0, z = 0 )
 			self.ballBody.setTorque( y = Ball.TORQUE, x = 0, z = 0 )		
-			
+		
+		# Keep the body in 2d position
+		self.alignBodyTo2d()
+		
 		# Set the new position
 		self.modelNode.setPos( render, self.ballBody.getPosition() )
 		self.modelNode.setQuat( render, Quat(self.ballBody.getQuaternion() ) )	
+
+	def alignBodyTo2d( self ):
+		body = self.ballBody
 		
+		# Constrain position of the body
+		oldPos = body.getPosition()
+		newPos = oldPos
+		newPos[0] = 0
+		newPos[1] = oldPos[1]
+		newPos[2] = oldPos[2]
+		
+		# Constrain quaternion of the body
+		oldQuat = body.getQuaternion()
+		newQuat = oldQuat
+		newQuat[0] = oldQuat[0]
+		newQuat[1] = oldQuat[1]
+		newQuat[2] = 0
+		newQuat[3] = 0
+		
+		# Set new position and quaternion of the body
+		body.setPosition(newPos)
+		body.setQuaternion(Quat(newQuat))
+	
 	def getPosition( self ):
 		return self.ballBody.getPosition()
 		

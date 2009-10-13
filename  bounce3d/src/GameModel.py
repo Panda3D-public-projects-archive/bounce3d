@@ -30,21 +30,20 @@ from pandac.PandaModules import DirectionalLight
 from Ball import Ball
 from Level import Level
 from Coin import Coin
+from MovingPlane import MovingPlane
 
 class GameModel:
-	''' Represents the world data. TODO: separate physics from this class'''
-	
-	COLLIDE_BITS = BitMask32( 0x00000002 )
-	CATEGORY_BITS = BitMask32( 0x00000001 )
-	
+	'''
+	Represents the world data.
+	TODO: separate physics from this class
+	Coordinatates information between Coin and Ball.
+	'''
+
 	def __init__(self):
 		base.disableMouse()
 		base.camera.lookAt(0, 0, 6)
 		base.setBackgroundColor(0,0,0)
 		
-		self.level2()
-	
-	def reset(self):
 		self.world = self.createWorld()
 		self.contactgroup = OdeJointGroup()
 		self.space = self.createCollisionSpace(self.world, self.contactgroup)
@@ -53,26 +52,21 @@ class GameModel:
 	
 		self.setLights()
 		
-		self.counter = 0
-		self.coins = []
 		
-		self.ball = Ball(self.world, self.space, "Johannes")
+		
+		self.ball = Ball(self.world, self.space, "Johannes", pos=(0,0,10))
 	
-	def level1(self):
-		self.reset()
 		self.kentta = Level(self.space)
-		base.camera.setPos(20, 0, 2)
-
-	def level2(self):
-		self.reset()
-		self.addGround( pos = (0,0,-10 ) )
-		self.addGround( pos = (0,5,-5 ) )
-		self.addGround( pos = (0,10,0 ) )
+		
+		plane = MovingPlane( self.space, pos = (0,0,5) )
+		plane = MovingPlane( self.space, pos = (0,5,10 ) )
+		plane = MovingPlane( self.space, pos = (0,10,15) )
 		
 		# a set of coins to be collected
-		self.coins.append( Coin(self.world, self.space, pos = (0,10,6) ) )
-		self.coins.append( Coin(self.world, self.space, pos = (0,5,6) ) )
-		
+		self.coins = []
+		self.coins.append( Coin(self.world, self.space, pos = (0,5,15) ) )
+		self.coins.append( Coin(self.world, self.space, pos = (0,10,17) ) )
+
 		base.camera.setPos(40, 0, 2)
 		
 	def setLights(self):
@@ -123,26 +117,7 @@ class GameModel:
 		space = OdeHashSpace()
 		space.setAutoCollideWorld(world)
 		space.setAutoCollideJointGroup( joints )
-		return space	
-	
-	def addGround(self, pos):
-		'''move this somewhere else'''
-		
-		# Hauska Bugi: kirjoita 1.0 eika 1
-		lx,ly,lz = 5,5,1.0   # dimension
-		px,py,pz = pos # position
-	
-		self.ground = loader.loadModel("box")		
-		self.ground.setScale( lx, ly, lz )
-		self.ground.setPos( px -lx/2, py -ly/2, pz -lz/2)
-		
-		self.ground.flattenLight()
-		self.ground.reparentTo(render)
-		
-		
-		
-		geom = OdeBoxGeom( self.space, lx, ly, lz)
-		geom.setPosition( px, py, pz)
+		return space
 		
 	def turnGravityTask(self):
 		''''''
@@ -180,7 +155,9 @@ class GameModel:
 		geom2 = entry.getGeom2()
 		body1 = entry.getBody1()
 		body2 = entry.getBody2()
+
+		for coin in self.coins:
+			if body1 == coin.getBody() and body2 == self.ball.getBody():
+				coin.collect()
+			
 		
-		self.counter = self.counter + 1
-		
-		#print "some collision ", self.counter

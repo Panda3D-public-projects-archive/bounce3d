@@ -7,7 +7,14 @@ class Coin:
 		self.world = world
 		self.space = space
 		self.addBox(pos)
+		
+		self.isCollected = False
 	
+	def collect(self):
+		if not self.isCollected:
+			self.isCollected = True
+			self.box.setColor(1,0,0)
+		
 	def addBox(self, pos):
 		
 		lx,ly,lz = 1,1,1   # dimension
@@ -38,3 +45,7 @@ class Coin:
 	def updateModelNode(self):
 		self.box.setPos( render, self.boxBody.getPosition() )
 		self.box.setQuat(render, Quat(self.boxBody.getQuaternion() ) )
+		
+	def getBody(self):
+		return self.boxBody
+	

@@ -29,6 +29,8 @@ from pandac.PandaModules import DirectionalLight
 
 from Ball import Ball
 from Level import Level
+from Player import Player
+from Event import Event
 from Coin import Coin
 from MovingPlane import MovingPlane
 
@@ -44,6 +46,8 @@ class GameModel:
 		base.camera.lookAt(0, 0, 6)
 		base.setBackgroundColor(0,0,0)
 		
+		self.isListening = False
+		
 		self.world = self.createWorld()
 		self.contactgroup = OdeJointGroup()
 		self.space = self.createCollisionSpace(self.world, self.contactgroup)
@@ -52,11 +56,9 @@ class GameModel:
 	
 		self.setLights()
 		
-		
-		
-		self.ball = Ball(self.world, self.space, "Johannes", pos=(0,0,10))
-	
-		self.kentta = Level(self.space)
+		self.ball = Ball(self.world, self.space, "Johanneksen pallo", pos=(0,0,10))	
+		self.kentta = Level(self.space)		
+		self.player = Player("Johannes")
 		
 		plane = MovingPlane( self.space, pos = (0,0,5) )
 		plane = MovingPlane( self.space, pos = (0,5,10 ) )
@@ -125,15 +127,6 @@ class GameModel:
 		g = -g
 		self.world.setGravity( g )
 	
-	def startMoveLeft(self):
-		self.ball.startMoveLeft()
-	def stopMoveLeft(self):
-		self.ball.stopMoveLeft()
-	def startMoveRight(self):
-		self.ball.startMoveRight()
-	def stopMoveRight(self):
-		self.ball.stopMoveRight()
-		
 	def updateObjects(self):
 		''' Update objects after one physics iteration '''
 		self.ball.updateModelNode()
@@ -147,8 +140,10 @@ class GameModel:
 		cx,cy,cz = base.camera.getPos()
 		base.camera.setPos( cx, y, cz )
 	
-	def getPallo(self):
+	def getBall(self):
 		return self.ball
+	def getPlayer(self):
+		return self.player
 		
 	def onCollision(self, entry):
 		geom1 = entry.getGeom1()

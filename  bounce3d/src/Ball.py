@@ -65,11 +65,19 @@ class Ball:
 		self.moveLeft = True
 	def stopMoveLeft( self ):
 		self.moveLeft = False
+	def isMovingLeft( self ):
+		return self.moveLeft
 	
 	def startMoveRight( self ):
 		self.moveRight = True
 	def stopMoveRight( self ):
 		self.moveRight = False
+	def isMovingRight( self ):
+		return self.moveRight
+	
+	def jump ( self ):
+		#TODO ADD IMPLEMENTATION
+		pass
 	
 	def updateModelNode(self):
 		''' Update objects after one physics iteration '''

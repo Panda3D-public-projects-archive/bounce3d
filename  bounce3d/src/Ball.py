@@ -3,6 +3,8 @@ from pandac.PandaModules import (
 	Quat,OdeBody, OdeMass, OdeSphereGeom, BitMask32)	
 from pandac.PandaModules import OdePlane2dJoint
 
+from direct.directbase.DirectStart import *
+
 class Ball:
 	
 	NAME_DEFAULT = "UNNAMED"
@@ -15,7 +17,12 @@ class Ball:
 	BALL_BODY_MASS_RADIUS = 1
 	FORCE = 90000
 	TORQUE = 3000
-	
+
+	STATIC_JUMP = 0
+	JUMP_FORCE = 18000000
+	MAX_JUMP_REACH_TIME = 0.7
+	COLLISION_THRESHOLD_TIME = 0.1
+
 	def __init__(
 	self, 
 	world,
@@ -32,6 +39,10 @@ class Ball:
 		self.scale = scale
 		self.world = world
 		self.space = space
+		self.jumping = False
+		self.jumpStarted = 0.0
+		self.jumpLastUpdate = 0.0
+		self.lastCollisionTime = 0.0
 		self.moveLeft = False
 		self.moveRight = False
 		self.modelNode = self.createModelNode( self.pos, self.hpr, self.scale, modelEgg )
@@ -75,20 +86,68 @@ class Ball:
 		self.moveRight = False
 	def isMovingRight( self ):
 		return self.moveRight
-	
-	def jump ( self ):
-		#TODO ADD IMPLEMENTATION
-		pass
-	
+
+	def jumpOn( self ):
+                if self.isColliding() == True:
+                        self.jumping = True
+                        self.jumpStarted = globalClock.getLongTime()
+                return
+
+        def jumpOff( self ):
+                self.jumping = False
+                self.jumpStarted = 0.0
+                self.jumpLastUpdate = 0.0
+                return
+
+        def isColliding( self ):
+                if self.lastCollisionTime == 0.0:
+                        return False
+
+                now = globalClock.getLongTime()
+                interval = now - self.lastCollisionTime
+                
+                if interval < Ball.COLLISION_THRESHOLD_TIME:
+                        return True
+                else:
+                        return False
+
+        def refreshCollisionTime( self ):
+                self.lastCollisionTime = globalClock.getLongTime()
+                return
+
 	def updateModelNode(self):
 		''' Update objects after one physics iteration '''
-		if self.moveLeft:
-			self.ballBody.setForce( y = -Ball.FORCE, x = 0, z = 0 )
-			self.ballBody.setTorque( y = -Ball.TORQUE, x = 0, z = 0 )	
-		elif self.moveRight:
-			self.ballBody.setForce( y = Ball.FORCE, x = 0, z = 0 )
-			self.ballBody.setTorque( y = Ball.TORQUE, x = 0, z = 0 )		
-		
+
+		''' Can only move when on (touching) something '''
+                if self.isColliding():
+                        if self.moveLeft:
+                                self.ballBody.setForce( y = -Ball.FORCE, x = 0, z = 0 )
+                                self.ballBody.setTorque( y = -Ball.TORQUE, x = 0, z = 0 )	
+                        elif self.moveRight:
+                                self.ballBody.setForce( y = Ball.FORCE, x = 0, z = 0 )
+                                self.ballBody.setTorque( y = Ball.TORQUE, x = 0, z = 0 )		
+
+                ''' This is still really crappy, will revise later '''
+                if self.jumping == True:
+                        if Ball.STATIC_JUMP:
+                                self.ballBody.setForce( y = 0, x = 0, z = Ball.JUMP_FORCE/5.0 )
+                                self.jumping = False
+                        else:
+                                now = globalClock.getLongTime()
+                                elapsed = now - self.jumpStarted
+        
+                                if elapsed > 0.0:
+                                        factor = 0.0
+                                        if self.jumpLastUpdate > 0.0:
+                                                factor = (now - self.jumpLastUpdate)/Ball.MAX_JUMP_REACH_TIME
+                                        else:
+                                                factor = elapsed/Ball.MAX_JUMP_REACH_TIME
+                                        self.jumpLastUpdate = now
+                                        if elapsed < Ball.MAX_JUMP_REACH_TIME:
+                                                self.ballBody.setForce( y = 0, x = 0, z = Ball.JUMP_FORCE * factor )
+                                        else:
+                                                self.jumping = False
+                                        
 		# Keep the body in 2d position
 		self.alignBodyTo2d()
 		
@@ -123,4 +182,7 @@ class Ball:
 		
 	def getBody( self ):
 		return self.ballBody
+
+	def getModelNode( self ):
+                return self.modelNode
 	

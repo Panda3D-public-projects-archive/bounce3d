@@ -28,6 +28,14 @@ from pandac.PandaModules import OdePlane2dJoint
 from pandac.PandaModules import AmbientLight
 from pandac.PandaModules import DirectionalLight
 
+from pandac.PandaModules import CollisionNode
+from pandac.PandaModules import CollisionSphere
+from pandac.PandaModules import CollisionTraverser
+from pandac.PandaModules import CollisionHandlerQueue
+
+# collision detection
+# from pandac.PandaModules import LPoint3f
+
 from Ball import Ball
 from Level import Level
 from Player import Player
@@ -74,6 +82,15 @@ class GameModel:
 		self.coins.append( Coin(self.world, self.space, pos = (0,10,17) ) )
 
 		base.camera.setPos(40, 0, 2)
+
+                #self.traverser = CollisionTraverser('collision traverser')
+
+		#base.cTrav = self.traverser
+		#self.collisionQueue = CollisionHandlerQueue()
+		#test = self.ball.getModelNode().attachNewNode(CollisionNode('colNode'))
+		#test.node().addSolid(CollisionSphere(0, 0, 0, 12))
+                #self.traverser.addCollider(test, self.collisionQueue)
+		#self.traverser.addCollider(self.ball.getBody(), onBallCollision)
 		
 	def setLights(self):
 		''' @author latenssi '''
@@ -154,6 +171,10 @@ class GameModel:
 		geom2 = entry.getGeom2()
 		body1 = entry.getBody1()
 		body2 = entry.getBody2()
+
+                # Is the ball touching something?
+                if body1 == self.ball.getBody() or body2 == self.ball.getBody():
+                        self.ball.refreshCollisionTime()
 
 		for coin in self.coins:
 			if body1 == coin.getBody() and body2 == self.ball.getBody():

@@ -7,7 +7,7 @@ from Event import Event, createNamedEvent
 
 class KeyboardControl(DirectObject):
 	''' @author J3lly '''
-	
+
 	PLAYER_RIGHT_KEY = "arrow_right"
 	PLAYER_LEFT_KEY = "arrow_left"
 	PLAYER_JUMP = "space"
@@ -28,23 +28,28 @@ class KeyboardControl(DirectObject):
 		playerMoveLeftOff = createNamedEvent(
 			player.name, Event.PLAYER_MOVE_LEFT_OFF
 		)
-		playerJump = createNamedEvent(
-			player.name, Event.PLAYER_JUMP
+		playerJumpOn = createNamedEvent(
+			player.name, Event.PLAYER_JUMP_ON
+		)
+		playerJumpOff = createNamedEvent(
+			player.name, Event.PLAYER_JUMP_OFF
 		)
 
 		self.accept(playerMoveRightOn, ball.startMoveRight)
 		self.accept(playerMoveRightOff, ball.stopMoveRight)		
 		self.accept(playerMoveLeftOn, ball.startMoveLeft)
 		self.accept(playerMoveLeftOff, ball.stopMoveLeft)
-		self.accept(playerJump, ball.jump) 	
-		
+		self.accept(playerJumpOn, ball.jumpOn) 	
+		self.accept(playerJumpOff, ball.jumpOff)
+
 		self.accept(KeyboardControl.PLAYER_RIGHT_KEY, player.moveRightOn)
 		self.accept(KeyboardControl.PLAYER_RIGHT_KEY + "-up", player.moveRightOff)
 		self.accept(KeyboardControl.PLAYER_LEFT_KEY, player.moveLeftOn)
 		self.accept(KeyboardControl.PLAYER_LEFT_KEY + "-up", player.moveLeftOff)
-		self.accept(KeyboardControl.PLAYER_JUMP, player.jump)
+		self.accept(KeyboardControl.PLAYER_JUMP, player.jumpOn)
+                self.accept(KeyboardControl.PLAYER_JUMP + "-up", player.jumpOff)
 		# Kun hyppy on implementoitu Ball-luokkaan, poista alempi koodirivi
-		self.accept(KeyboardControl.PLAYER_JUMP, model.turnGravityTask )
+		#self.accept(KeyboardControl.PLAYER_JUMP, model.turnGravityTask )
 		
 		model.isListening = True
 		

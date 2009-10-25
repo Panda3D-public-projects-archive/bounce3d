@@ -13,8 +13,12 @@ class Player:
     self.right = Player.RIGHT_DEFAULT
     self.left = Player.LEFT_DEFAULT
 
-  def jump(self):
-    jumpEvent = createNamedEvent(self.name, Event.PLAYER_JUMP)
+  def jumpOn(self):
+    jumpEvent = createNamedEvent(self.name, Event.PLAYER_JUMP_ON)
+    messenger.send(jumpEvent)
+
+  def jumpOff(self):
+    jumpEvent = createNamedEvent(self.name, Event.PLAYER_JUMP_OFF)
     messenger.send(jumpEvent)
 
   def moveRightOn(self):

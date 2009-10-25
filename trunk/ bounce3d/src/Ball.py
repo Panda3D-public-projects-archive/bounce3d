@@ -118,14 +118,17 @@ class Ball:
 	def updateModelNode(self):
 		''' Update objects after one physics iteration '''
 
-		''' Can only move when on (touching) something '''
+		''' Can move better when on (touching) something, moving in the air is harder '''
+		divisor = 1.0
                 if self.isColliding():
-                        if self.moveLeft:
-                                self.ballBody.setForce( y = -Ball.FORCE, x = 0, z = 0 )
-                                self.ballBody.setTorque( y = -Ball.TORQUE, x = 0, z = 0 )	
-                        elif self.moveRight:
-                                self.ballBody.setForce( y = Ball.FORCE, x = 0, z = 0 )
-                                self.ballBody.setTorque( y = Ball.TORQUE, x = 0, z = 0 )		
+                       divisor = 3.0
+
+                if self.moveLeft:
+                        self.ballBody.setForce( y = -Ball.FORCE/divisor, x = 0, z = 0 )
+                        self.ballBody.setTorque( y = -Ball.TORQUE/divisor, x = 0, z = 0 )	
+                elif self.moveRight:
+                        self.ballBody.setForce( y = Ball.FORCE/divisor, x = 0, z = 0 )
+                        self.ballBody.setTorque( y = Ball.TORQUE/divisor, x = 0, z = 0 )		
 
                 ''' This is still really crappy, will revise later '''
                 if self.jumping == True:

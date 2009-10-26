@@ -44,6 +44,7 @@ class Ball:
 		self.jumpStarted = 0.0
 		self.jumpLastUpdate = 0.0
 		self.lastCollisionTime = 0.0
+		self.lastCollisionIsGround = True
 		self.moveLeft = False
 		self.moveRight = False
 		self.modelNode = self.createModelNode( self.pos, self.hpr, self.scale, modelEgg )
@@ -89,61 +90,70 @@ class Ball:
 		return self.moveRight
 
 	def jumpOn( self ):
-                if self.isColliding() == True:
-                        self.jumping = True
-                        self.jumpStarted = globalClock.getLongTime()
-                return
+		if self.isColliding() == True and self.lastCollisionIsGround:
+			self.jumping = True
+			self.jumpStarted = globalClock.getLongTime()
+		return
 
-        def jumpOff( self ):
-                self.jumping = False
-                self.jumpStarted = 0.0
-                self.jumpLastUpdate = 0.0
-                return
+	def jumpOff( self ):
+		self.jumping = False
+		self.jumpStarted = 0.0
+		self.jumpLastUpdate = 0.0
+		return
 
-        def isColliding( self ):
-                if self.lastCollisionTime == 0.0:
-                        return False
+	def isColliding( self ):
+		if self.lastCollisionTime == 0.0:
+			return False
 
-                now = globalClock.getLongTime()
-                interval = now - self.lastCollisionTime
+		now = globalClock.getLongTime()
+		interval = now - self.lastCollisionTime
                 
-                if interval < Ball.COLLISION_THRESHOLD_TIME:
-                        return True
-                else:
-                        return False
+		if interval < Ball.COLLISION_THRESHOLD_TIME:
+			return True
+		else:
+			return False
+	
+	def isGroundCollision( self, colPos ):
+		body = self.ballBody
+		pos = body.getPosition()
+		if colPos[2] < pos[2]:
+			return True
+		return False
 
-        def refreshCollisionTime( self ):
-                self.lastCollisionTime = globalClock.getLongTime()
-                return
+	def refreshCollisionTime( self, numCol, colPos ):
+		self.lastCollisionTime = globalClock.getLongTime()
+		if numCol == 1:
+			self.lastCollisionIsGround = self.isGroundCollision(colPos)
 
 	def updateModelNode(self):
 		''' Update objects after one physics iteration '''
 
 		''' Can move better when on (touching) something, moving in the air is harder '''
 		divisor = 3.5
-                if self.isColliding():
-                       divisor = 1.0
+		if self.isColliding() and self.lastCollisionIsGround:
+		   divisor = 1.0
 
-                if self.moveLeft:
-                        self.ballBody.setForce( y = -Ball.FORCE/divisor, x = 0, z = 0 )
-                        self.ballBody.setTorque( y = -Ball.TORQUE/divisor, x = 0, z = 0 )	
-                elif self.moveRight:
-                        self.ballBody.setForce( y = Ball.FORCE/divisor, x = 0, z = 0 )
-                        self.ballBody.setTorque( y = Ball.TORQUE/divisor, x = 0, z = 0 )		
+		if self.moveLeft:
+			self.ballBody.setForce( y = -Ball.FORCE/divisor, x = 0, z = 0 )
+			self.ballBody.setTorque( y = -Ball.TORQUE/divisor, x = 0, z = 0 )	
+		elif self.moveRight:
+			self.ballBody.setForce( y = Ball.FORCE/divisor, x = 0, z = 0 )
+			self.ballBody.setTorque( y = Ball.TORQUE/divisor, x = 0, z = 0 )		
 
-                ''' This is still really crappy, will revise later '''
-                if self.jumping == True:
-                        if Ball.STATIC_JUMP:
-                                self.ballBody.setForce( y = 0, x = 0, z = Ball.STATIC_JUMP_FORCE)
-                                self.jumping = False
-                        else:
-                                now = globalClock.getLongTime()
-                                elapsed = now - self.jumpStarted
-                
-                                if elapsed > 0.0 and elapsed < Ball.MAX_JUMP_REACH_TIME:
-                                        self.ballBody.setForce( y = 0, x = 0, z = Ball.JUMP_FORCE)
-                                elif elapsed > Ball.MAX_JUMP_REACH_TIME:
-                                        self.jumping = False                       
+		''' This is still really crappy, will revise later '''
+		if self.jumping == True:
+			if Ball.STATIC_JUMP:
+				self.ballBody.setForce( y = 0, x = 0, z = Ball.STATIC_JUMP_FORCE)
+				self.jumping = False
+			else:
+				now = globalClock.getLongTime()
+				elapsed = now - self.jumpStarted
+
+				if elapsed > 0.0 and elapsed < Ball.MAX_JUMP_REACH_TIME:
+					self.ballBody.setForce( y = 0, x = 0, z = Ball.JUMP_FORCE)
+				elif elapsed > Ball.MAX_JUMP_REACH_TIME:
+					self.jumping = False 
+					
 		# Keep the body in 2d position
 		self.alignBodyTo2d()
 		

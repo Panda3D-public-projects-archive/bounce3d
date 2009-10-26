@@ -18,8 +18,9 @@ class Ball:
 	FORCE = 90000
 	TORQUE = 3000
 
-	STATIC_JUMP = 0
-	JUMP_FORCE = 18000000
+	STATIC_JUMP = 1
+	STATIC_JUMP_FORCE = 2800000
+	JUMP_FORCE = 120000
 	MAX_JUMP_REACH_TIME = 0.7
 	COLLISION_THRESHOLD_TIME = 0.1
 
@@ -133,24 +134,16 @@ class Ball:
                 ''' This is still really crappy, will revise later '''
                 if self.jumping == True:
                         if Ball.STATIC_JUMP:
-                                self.ballBody.setForce( y = 0, x = 0, z = Ball.JUMP_FORCE/5.0 )
+                                self.ballBody.setForce( y = 0, x = 0, z = Ball.STATIC_JUMP_FORCE)
                                 self.jumping = False
                         else:
                                 now = globalClock.getLongTime()
                                 elapsed = now - self.jumpStarted
-        
-                                if elapsed > 0.0:
-                                        factor = 0.0
-                                        if self.jumpLastUpdate > 0.0:
-                                                factor = (now - self.jumpLastUpdate)/Ball.MAX_JUMP_REACH_TIME
-                                        else:
-                                                factor = elapsed/Ball.MAX_JUMP_REACH_TIME
-                                        self.jumpLastUpdate = now
-                                        if elapsed < Ball.MAX_JUMP_REACH_TIME:
-                                                self.ballBody.setForce( y = 0, x = 0, z = Ball.JUMP_FORCE * factor )
-                                        else:
-                                                self.jumping = False
-                                        
+                
+                                if elapsed > 0.0 and elapsed < Ball.MAX_JUMP_REACH_TIME:
+                                        self.ballBody.setForce( y = 0, x = 0, z = Ball.JUMP_FORCE)
+                                elif elapsed > Ball.MAX_JUMP_REACH_TIME:
+                                        self.jumping = False                       
 		# Keep the body in 2d position
 		self.alignBodyTo2d()
 		

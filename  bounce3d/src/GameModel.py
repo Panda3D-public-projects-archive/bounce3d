@@ -174,11 +174,9 @@ class GameModel:
 
 		# Is the ball touching something?
 		if body1 == self.ball.getBody() or body2 == self.ball.getBody():
-			collisions = []
 			n = entry.getNumContacts()
-			for i in range(n):
-				collisions.append(entry.getContactPoint(i))
-			self.ball.refreshCollisionTime(n, collisions)
+			if n > 0:
+				self.ball.refreshCollisionTime(n, entry.getContactPoint(0))
 
 		for coin in self.coins:
 			if body1 == coin.getBody() and body2 == self.ball.getBody():

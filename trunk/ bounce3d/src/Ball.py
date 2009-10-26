@@ -116,14 +116,22 @@ class Ball:
 	def isGroundCollision( self, colPos ):
 		body = self.ballBody
 		pos = body.getPosition()
-		if colPos[2] < pos[2]:
+		tolerance = 0.6
+		radius = 1.0
+		dz = pos[2] - colPos[2]
+		if dz > (radius-tolerance) and dz < (radius+tolerance):
+			#print "GROUND"
 			return True
+		#print str(dz) + "///" + str(pos) + "///" + str(colPos)
+		#print "ELSE"
 		return False
 
 	def refreshCollisionTime( self, numCol, colPos ):
 		self.lastCollisionTime = globalClock.getLongTime()
-		if numCol == 1:
-			self.lastCollisionIsGround = self.isGroundCollision(colPos)
+		self.lastCollisionIsGround = False
+		for i in range(numCol):
+			 if self.isGroundCollision(colPos[i]):
+				self.lastCollisionIsGround = True
 
 	def updateModelNode(self):
 		''' Update objects after one physics iteration '''

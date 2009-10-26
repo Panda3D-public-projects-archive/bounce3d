@@ -119,9 +119,9 @@ class Ball:
 		''' Update objects after one physics iteration '''
 
 		''' Can move better when on (touching) something, moving in the air is harder '''
-		divisor = 1.0
+		divisor = 3.5
                 if self.isColliding():
-                       divisor = 3.0
+                       divisor = 1.0
 
                 if self.moveLeft:
                         self.ballBody.setForce( y = -Ball.FORCE/divisor, x = 0, z = 0 )

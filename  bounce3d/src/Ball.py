@@ -18,6 +18,7 @@ class Ball:
 	FORCE = 90000
 	TORQUE = 3000
 
+	JUMP_DEBUG = 1
 	STATIC_JUMP = 0
 	STATIC_JUMP_FORCE = 2800000
 	JUMP_FORCE = 120000
@@ -25,7 +26,8 @@ class Ball:
 	COLLISION_THRESHOLD_TIME = 0.1
 
 	def __init__(
-	self, 
+	self,
+	application,
 	world,
 	space,
 	name = NAME_DEFAULT, 
@@ -38,6 +40,7 @@ class Ball:
 		self.pos = pos
 		self.hpr = hpr
 		self.scale = scale
+		self.application = application
 		self.world = world
 		self.space = space
 		self.jumping = False
@@ -46,6 +49,8 @@ class Ball:
 		self.lastCollisionTime = 0.0
 		self.lastCollisionIsGround = True
 		self.lastGroundCollisionBodyPos = None
+		if Ball.JUMP_DEBUG:
+			self.lastTakeoffTime = 0.0
 		self.moveLeft = False
 		self.moveRight = False
 		self.modelNode = self.createModelNode( self.pos, self.hpr, self.scale, modelEgg )
@@ -110,8 +115,15 @@ class Ball:
 		interval = now - self.lastCollisionTime
                 
 		if interval < Ball.COLLISION_THRESHOLD_TIME:
+			if Ball.JUMP_DEBUG:
+				self.lastTakeoffTime = 0.0
 			return True
 		else:
+			if Ball.JUMP_DEBUG:
+				# Draw debug info
+				if self.lastTakeoffTime == 0.0:
+					self.lastTakeoffTime = now
+					self.application.updateHUD(", Ball state: AIR")
 			return False
 	
 	def isGroundCollision( self, bodyPos, colPos ):
@@ -140,6 +152,10 @@ class Ball:
 		body = self.ballBody
 		pos = body.getPosition()
 		self.lastCollisionTime = globalClock.getLongTime()
+		
+		if Ball.JUMP_DEBUG:
+			previous = self.lastCollisionIsGround
+		
 		self.lastCollisionIsGround = False
 		n = collisionEntry.getNumContacts()
 		for i in range(n):
@@ -154,6 +170,15 @@ class Ball:
 				self.lastCollisionIsGround = True
 				# Position should not be updated, since this was not technically a ground collision
 				# as we normally judge them
+		
+		if Ball.JUMP_DEBUG:
+			# Draw debug info
+			if previous != self.lastCollisionIsGround or self.lastTakeoffTime != 0.0:
+				self.lastTakeoffTime = 0.0
+				if self.lastCollisionIsGround:
+					self.application.updateHUD(", Ball state: GROUND")
+				else:
+					self.application.updateHUD(", Ball state: ???")
 
 	def updateModelNode(self):
 		''' Update objects after one physics iteration '''

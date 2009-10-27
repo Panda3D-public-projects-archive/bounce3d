@@ -50,13 +50,14 @@ class GameModel:
 	Coordinatates information between Coin and Ball.
 	'''
 
-	def __init__(self):
+	def __init__(self, application):
 		base.disableMouse()
 		base.camera.lookAt(0, 0, 6)
 		base.setBackgroundColor(0,0,0)
 		
 		self.isListening = False
 		
+		self.application = application
 		self.world = self.createWorld()
 		self.contactgroup = OdeJointGroup()
 		self.space = self.createCollisionSpace(self.world, self.contactgroup)
@@ -65,7 +66,7 @@ class GameModel:
 	
 		self.setLights()
 		
-		self.ball = Ball(self.world, self.space, "Johanneksen pallo", pos=(0,0,10))	
+		self.ball = Ball(self.application, self.world, self.space, "Johanneksen pallo", pos=(0,0,10))	
 		#ballBody = self.ball.getBody()
 		#ballJoint = OdePlane2dJoint(self.world)
 		#ballJoint.attachBody(ballBody, 1)

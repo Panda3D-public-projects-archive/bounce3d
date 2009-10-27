@@ -117,10 +117,11 @@ class Ball:
 	def isGroundCollision( self, bodyPos, colPos ):
 		# Tolerance should probably be some fraction of the radius
 		tolerance = 0.2
+		tolerance2 = 0.3
 		if colPos[2] < bodyPos[2]+tolerance:
 			dy = colPos[1] - bodyPos[1]
 			# >= is important
-			if (dy >= 0.0 and dy < tolerance) or (dy < 0.0 and dy > -tolerance):
+			if (dy >= 0.0 and dy < tolerance2) or (dy < 0.0 and dy > -tolerance2):
 				return True
 		return False
 	

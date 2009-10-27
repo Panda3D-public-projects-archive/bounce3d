@@ -32,7 +32,7 @@ class GameApplication(DirectObject):
 		'''
 		# Add a text on the screen.
 		helpText = OnscreenText(
-			text = "Turn gravity [SPACE], moving [ARROWS]",
+			text = "Jump [SPACE], moving [ARROWS], turn gravity [???]",
 			style = 1,
 			fg = (1,1,1,1),
 			pos = (-1.25,0.85),

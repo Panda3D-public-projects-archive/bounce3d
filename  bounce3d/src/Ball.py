@@ -45,6 +45,7 @@ class Ball:
 		self.jumpLastUpdate = 0.0
 		self.lastCollisionTime = 0.0
 		self.lastCollisionIsGround = True
+		self.lastGroundCollisionBodyPos = None
 		self.moveLeft = False
 		self.moveRight = False
 		self.modelNode = self.createModelNode( self.pos, self.hpr, self.scale, modelEgg )
@@ -113,17 +114,43 @@ class Ball:
 		else:
 			return False
 	
-	def isGroundCollision( self, colPos ):
+	def isGroundCollision( self, bodyPos, colPos ):
+		#Tolerance should probably be some fraction of the radius
+		tolerance = 0.2
+		if colPos[2] < bodyPos[2]+tolerance:
+			dy = colPos[1] - bodyPos[1]
+			# >= is important
+			if (dy >= 0.0 and dy < tolerance) or (dy < 0.0 and dy > -tolerance):
+				return True
+		return False
+	
+	def areCloseEnough( self, pos1, pos2 ):
+		tolerance = 0.15
+		dy = pos1[1] - pos2[1]
+		# >= is important
+		if (dy >= 0.0 and dy < tolerance) or (dy < 0.0 and dy > -tolerance):
+			dz = pos1[2] - pos2[2]
+			# >= is important
+			if (dz >= 0.0 and dz < tolerance) or (dz < 0.0 and dz > -tolerance):
+				return True
+		return False
+		
+	def refreshCollisionTime( self, collisionEntry):
 		body = self.ballBody
 		pos = body.getPosition()
-		if colPos[2] < pos[2]:
-			return True
-		return False
-
-	def refreshCollisionTime( self, numCol, colPos ):
 		self.lastCollisionTime = globalClock.getLongTime()
-		if numCol == 1:
-			self.lastCollisionIsGround = self.isGroundCollision(colPos)
+		self.lastCollisionIsGround = False
+		n = collisionEntry.getNumContacts()
+		for i in range(n):
+			p = collisionEntry.getContactPoint(i)
+			if self.isGroundCollision(pos,p):
+				self.lastCollisionIsGround = True
+				self.lastGroundCollisionBodyPos = pos
+				break
+		
+		if not self.lastCollisionIsGround and self.lastGroundCollisionBodyPos != None:
+			if self.areCloseEnough(pos, self.lastGroundCollisionBodyPos):
+				self.lastCollisionIsGround = True
 
 	def updateModelNode(self):
 		''' Update objects after one physics iteration '''

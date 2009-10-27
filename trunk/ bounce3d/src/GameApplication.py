@@ -26,7 +26,7 @@ class GameApplication(DirectObject):
 		self.createHUD()
 
 	def updateHUD(self, append):
-		self.helpText.setText("Jump [SPACE], moving [ARROWS], turn gravity [???]" + append)
+		self.helpText.setText("Jump [SPACE], moving [ARROWS], turn gravity [g]" + append)
 	
 	def createHUD(self):
 		'''
@@ -35,7 +35,7 @@ class GameApplication(DirectObject):
 		'''
 		# Add a text on the screen.
 		self.helpText = OnscreenText(
-			text = "Jump [SPACE], moving [ARROWS], turn gravity [???]",
+			text = "Jump [SPACE], moving [ARROWS], turn gravity [g]",
 			style = 1,
 			fg = (1,1,1,1),
 			pos = (-1.25,0.85),

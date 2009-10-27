@@ -115,7 +115,7 @@ class Ball:
 			return False
 	
 	def isGroundCollision( self, bodyPos, colPos ):
-		#Tolerance should probably be some fraction of the radius
+		# Tolerance should probably be some fraction of the radius
 		tolerance = 0.2
 		if colPos[2] < bodyPos[2]+tolerance:
 			dy = colPos[1] - bodyPos[1]
@@ -151,6 +151,8 @@ class Ball:
 		if not self.lastCollisionIsGround and self.lastGroundCollisionBodyPos != None:
 			if self.areCloseEnough(pos, self.lastGroundCollisionBodyPos):
 				self.lastCollisionIsGround = True
+				# Position should not be updated, since this was not technically a ground collision
+				# as we normally judge them
 
 	def updateModelNode(self):
 		''' Update objects after one physics iteration '''

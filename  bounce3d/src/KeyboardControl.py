@@ -11,6 +11,7 @@ class KeyboardControl(DirectObject):
 	PLAYER_RIGHT_KEY = "arrow_right"
 	PLAYER_LEFT_KEY = "arrow_left"
 	PLAYER_JUMP = "space"
+	TURN_GRAVITY = "g"
 	
 	def __init__(self, model):
 		player = model.getPlayer()
@@ -47,9 +48,9 @@ class KeyboardControl(DirectObject):
 		self.accept(KeyboardControl.PLAYER_LEFT_KEY, player.moveLeftOn)
 		self.accept(KeyboardControl.PLAYER_LEFT_KEY + "-up", player.moveLeftOff)
 		self.accept(KeyboardControl.PLAYER_JUMP, player.jumpOn)
-                self.accept(KeyboardControl.PLAYER_JUMP + "-up", player.jumpOff)
-		# Kun hyppy on implementoitu Ball-luokkaan, poista alempi koodirivi
-		#self.accept(KeyboardControl.PLAYER_JUMP, model.turnGravityTask )
+		self.accept(KeyboardControl.PLAYER_JUMP + "-up", player.jumpOff)
+		
+		self.accept(KeyboardControl.TURN_GRAVITY, model.turnGravityTask )
 		
 		model.isListening = True
 		

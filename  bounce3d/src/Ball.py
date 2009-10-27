@@ -23,7 +23,7 @@ class Ball:
 	STATIC_JUMP_FORCE = 2800000
 	JUMP_FORCE = 120000
 	MAX_JUMP_REACH_TIME = 0.7
-	COLLISION_THRESHOLD_TIME = 0.1
+	COLLISION_THRESHOLD_TIME = 0.33
 
 	def __init__(
 	self,
@@ -151,13 +151,17 @@ class Ball:
 	def refreshCollisionTime( self, collisionEntry):
 		body = self.ballBody
 		pos = body.getPosition()
-		self.lastCollisionTime = globalClock.getLongTime()
+		now = globalClock.getLongTime()
+		if now - self.lastCollisionTime < 0.15:
+			return
+		self.lastCollisionTime = now 
 		
 		if Ball.JUMP_DEBUG:
 			previous = self.lastCollisionIsGround
 		
 		self.lastCollisionIsGround = False
 		n = collisionEntry.getNumContacts()
+
 		for i in range(n):
 			p = collisionEntry.getContactPoint(i)
 			if self.isGroundCollision(pos,p):
@@ -182,6 +186,8 @@ class Ball:
 
 	def updateModelNode(self):
 		''' Update objects after one physics iteration '''
+		#body = self.ballBody
+		#print body.getLinearVel()
 
 		''' Can move better when on (touching) something, moving in the air is harder '''
 		divisor = 3.5

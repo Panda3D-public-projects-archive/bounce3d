@@ -13,7 +13,7 @@ from GameControl import GameControl
 class GameApplication(DirectObject):
 	
 	def __init__(self):
-		model = GameModel()
+		model = GameModel( self )
 		loop = GameControl( 60.0, model )
 		keys = KeyboardControl( model )
 		
@@ -24,14 +24,17 @@ class GameApplication(DirectObject):
 			name = "Physics Simulation")
 			
 		self.createHUD()
-		
+
+	def updateHUD(self, append):
+		self.helpText.setText("Jump [SPACE], moving [ARROWS], turn gravity [???]" + append)
+	
 	def createHUD(self):
 		'''
 		PRE: call once
 		POST: a stylished text is placed on the screen.
 		'''
 		# Add a text on the screen.
-		helpText = OnscreenText(
+		self.helpText = OnscreenText(
 			text = "Jump [SPACE], moving [ARROWS], turn gravity [???]",
 			style = 1,
 			fg = (1,1,1,1),
@@ -39,7 +42,7 @@ class GameApplication(DirectObject):
 			align = TextNode.ALeft,
 			scale = 0.07
 		)
-		helpText.show()
+		self.helpText.show()
 	
 	def run(self):
 		base.run()

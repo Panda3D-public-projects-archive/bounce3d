@@ -253,10 +253,10 @@ class Ball:
 			factor = 1.0
 			if self.moveLeft:
 				factor = -1.0
-			v3 = self.perpendicularUnitWithFixedX(g)
+			v3 = self.perpendicularUnitVecWithFixedX(g)
 			v3 *= factor*Ball.FORCE/divisor
 			self.ballBody.setForce( y = v3.getY() , x = v3.getX(), z = v3.getZ())
-			v3 = self.perpendicularUnitWithFixedX(g)
+			v3 = self.perpendicularUnitVecWithFixedX(g)
 			v3 *= factor*Ball.TORQUE/divisor
 			self.ballBody.setTorque( y = v3.getY(), x = v3.getX(), z = v3.getX())	
 

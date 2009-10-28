@@ -12,7 +12,8 @@ class KeyboardControl(DirectObject):
 	PLAYER_LEFT_KEY = "arrow_left"
 	PLAYER_JUMP = "space"
 	TURN_GRAVITY = "g"
-	
+	TURN_GRAVITY2 = "h"
+
 	def __init__(self, model):
 		player = model.getPlayer()
 		ball = model.getBall()
@@ -51,6 +52,7 @@ class KeyboardControl(DirectObject):
 		self.accept(KeyboardControl.PLAYER_JUMP + "-up", player.jumpOff)
 		
 		self.accept(KeyboardControl.TURN_GRAVITY, model.turnGravityTask )
+		self.accept(KeyboardControl.TURN_GRAVITY2, model.turnGravityTask2 )
 		
 		model.isListening = True
 		

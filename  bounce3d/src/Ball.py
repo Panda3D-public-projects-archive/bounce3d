@@ -107,7 +107,7 @@ class Ball:
 	def isMovingRight( self ):
 		return self.moveRight
 		
-	def perpendicularUnitWithFixedX(self, v):
+	def perpendicularUnitVecWithFixedX(self, v):
 		out = VBase3()
 		a = 1.0
 		out.setX(0.0)
@@ -116,7 +116,7 @@ class Ball:
 			out.setZ(a)
 		else:
 			out.setY(a)
-			out.setZ(0.0)		
+			out.setZ(0.0)
 		out /= out.length()
 		return out
 		
@@ -153,15 +153,14 @@ class Ball:
 	
 	def isGroundCollision( self, bodyPos, colPos ):
 		# Tolerance should probably be some fraction of the radius
-		tolerance = 0.2
-		tolerance2 = 0.3
-		if colPos[2] < bodyPos[2]+tolerance:
-			dy = colPos[1] - bodyPos[1]
-			# >= is important
-			if (dy >= 0.0 and dy < tolerance2) or (dy < 0.0 and dy > -tolerance2):
-				return True
-		return False
-	
+		g = self.world.getGravity()
+		g /= g.length()
+		# g *= Ball.RADIUS
+		bodyPos[0] = bodyPos[0] + g.getX() 
+		bodyPos[1] = bodyPos[1] + g.getY()
+		bodyPos[2] = bodyPos[2] + g.getZ()
+		return self.areCloseEnough(bodyPos, colPos)
+
 	def areCloseEnough( self, pos1, pos2 ):
 		tolerance = 0.3
 		dy = pos1[1] - pos2[1]
@@ -229,10 +228,11 @@ class Ball:
 		''' Update objects after one physics iteration '''		
 		now = globalClock.getLongTime()
 		body = self.ballBody
+		g = self.world.getGravity()
 		
 		if Ball.MOVEMENT_DEBUG and now - self.lastDrawTime2 > 0.2:
 			v = body.getLinearVel()
-			v2 = self.perpendicularUnitWithFixedX(v)
+			v2 = self.perpendicularUnitVecWithFixedX(v)
 			self.lines.reset()
 			self.lines3.reset()
 			x = body.getPosition().getX() + 1.2 # This will bring the line in front of the ball
@@ -249,22 +249,30 @@ class Ball:
 		if self.isColliding() and self.lastCollisionIsGround:
 		   divisor = 1.0
 
-		if self.moveLeft:
-			self.ballBody.setForce( y = -Ball.FORCE/divisor, x = 0, z = 0 )
-			self.ballBody.setTorque( y = -Ball.TORQUE/divisor, x = 0, z = 0 )	
-		elif self.moveRight:
-			self.ballBody.setForce( y = Ball.FORCE/divisor, x = 0, z = 0 )
-			self.ballBody.setTorque( y = Ball.TORQUE/divisor, x = 0, z = 0 )		
+		if self.moveLeft or self.moveRight:
+			factor = 1.0
+			if self.moveLeft:
+				factor = -1.0
+			v3 = self.perpendicularUnitWithFixedX(g)
+			v3 *= factor*Ball.FORCE/divisor
+			self.ballBody.setForce( y = v3.getY() , x = v3.getX(), z = v3.getZ())
+			v3 = self.perpendicularUnitWithFixedX(g)
+			v3 *= factor*Ball.TORQUE/divisor
+			self.ballBody.setTorque( y = v3.getY(), x = v3.getX(), z = v3.getX())	
 
 		''' This is still really crappy, will revise later '''
 		if self.jumping == True:
+			g = -g
+			g /= g.length()
 			if Ball.STATIC_JUMP:
-				self.ballBody.setForce( y = 0, x = 0, z = Ball.STATIC_JUMP_FORCE)
+				g *= Ball.STATIC_JUMP_FORCE
+				self.ballBody.setForce( y = g.getY(), x = g.getX(), z = g.getZ())
 				self.jumping = False
 			else:
 				elapsed = now - self.jumpStarted
-				if elapsed > 0.0 and elapsed < Ball.MAX_JUMP_REACH_TIME:
-					self.ballBody.setForce( y = 0, x = 0, z = Ball.JUMP_FORCE)
+				if elapsed > 0.0 and elapsed < Ball.MAX_JUMP_REACH_TIME:	
+					g *= Ball.JUMP_FORCE
+					self.ballBody.setForce( y = g.getY(), x = g.getX(), z = g.getZ())
 				elif elapsed > Ball.MAX_JUMP_REACH_TIME:
 					self.jumping = False 
 	

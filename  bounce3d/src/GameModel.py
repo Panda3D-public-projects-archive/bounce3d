@@ -149,6 +149,13 @@ class GameModel:
 		g = -g
 		self.world.setGravity( g )
 	
+	def turnGravityTask2(self):
+		''''''
+		g = self.world.getGravity()
+		g2 = self.ball.perpendicularUnitVecWithFixedX(g)
+		g2 *= 9.8
+		self.world.setGravity( g2 )
+	
 	def updateObjects(self):
 		''' Update objects after one physics iteration '''
 		self.ball.updateModelNode()

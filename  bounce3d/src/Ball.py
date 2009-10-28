@@ -2,6 +2,8 @@
 from pandac.PandaModules import (
 	Quat,OdeBody, OdeMass, OdeSphereGeom, BitMask32)	
 from pandac.PandaModules import OdePlane2dJoint
+from pandac.PandaModules import Vec4
+from direct.directtools.DirectGeometry import LineNodePath
 
 from direct.directbase.DirectStart import *
 
@@ -18,7 +20,8 @@ class Ball:
 	FORCE = 90000
 	TORQUE = 3000
 
-	JUMP_DEBUG = 1
+	MOVEMENT_DEBUG = 0
+	JUMP_DEBUG = 0
 	STATIC_JUMP = 0
 	STATIC_JUMP_FORCE = 2800000
 	JUMP_FORCE = 120000
@@ -49,6 +52,13 @@ class Ball:
 		self.lastCollisionTime = 0.0
 		self.lastCollisionIsGround = True
 		self.lastGroundCollisionBodyPos = None
+		
+		if Ball.MOVEMENT_DEBUG:
+			self.lastDrawTime = 0.0
+			self.lastDrawTime2 = 0.0
+			self.lines = LineNodePath(parent = render, thickness = 3.0, colorVec = Vec4(1, 0, 0, 1))
+			self.lines2 = LineNodePath(parent = render, thickness = 3.0, colorVec = Vec4(0, 0, 1, 1))
+
 		if Ball.JUMP_DEBUG:
 			self.lastTakeoffTime = 0.0
 		self.moveLeft = False
@@ -152,8 +162,16 @@ class Ball:
 		body = self.ballBody
 		pos = body.getPosition()
 		now = globalClock.getLongTime()
+		
+		'''
+		Only "sample" collisions occasionally, should be enough for jumping.
+		This also effects the collision threshold time, which should be somewhat
+		larger (maybe twice?) than this value for jumping to work properly
+		'''
+		
 		if now - self.lastCollisionTime < 0.15:
 			return
+		
 		self.lastCollisionTime = now 
 		
 		if Ball.JUMP_DEBUG:
@@ -164,6 +182,14 @@ class Ball:
 
 		for i in range(n):
 			p = collisionEntry.getContactPoint(i)
+			if Ball.MOVEMENT_DEBUG and now - self.lastDrawTime > 0.1:
+				self.lines2.reset()
+				x = p.getX() + 1.2 # This will bring the line in front of the ball
+				y = p.getY()
+				z = p.getZ()
+				self.lines2.drawLines([((x, y, z), (x, y-1.0, z+2.0))]) # "marker" will be a line upwards tilting to the left
+				self.lines2.create()
+				self.lastDrawTime = now
 			if self.isGroundCollision(pos,p):
 				self.lastCollisionIsGround = True
 				self.lastGroundCollisionBodyPos = pos
@@ -183,11 +209,21 @@ class Ball:
 					self.application.updateHUD(", Ball state: GROUND")
 				else:
 					self.application.updateHUD(", Ball state: ???")
-
+					
 	def updateModelNode(self):
-		''' Update objects after one physics iteration '''
-		#body = self.ballBody
-		#print body.getLinearVel()
+		''' Update objects after one physics iteration '''		
+		now = globalClock.getLongTime()
+		body = self.ballBody
+		
+		if Ball.MOVEMENT_DEBUG and now - self.lastDrawTime2 > 0.2:
+			v = body.getLinearVel()
+			self.lines.reset()
+			x = body.getPosition().getX() + 1.2 # This will bring the line in front of the ball
+			y = body.getPosition().getY()
+			z = body.getPosition().getZ()
+			self.lines.drawLines([((x, y, z), (x+v.getX(), y+v.getY(), z+v.getZ()))])
+			self.lines.create()
+			self.lastDrawTime2 = 0.0
 
 		''' Can move better when on (touching) something, moving in the air is harder '''
 		divisor = 3.5
@@ -195,7 +231,7 @@ class Ball:
 		   divisor = 1.0
 
 		if self.moveLeft:
-			self.ballBody.setForce( y = -Ball.FORCE/divisor, x = 0, z = 0 )
+			self.ballBody.setForce(  y = -Ball.TORQUE/divisor, x = 0, z = 0 )
 			self.ballBody.setTorque( y = -Ball.TORQUE/divisor, x = 0, z = 0 )	
 		elif self.moveRight:
 			self.ballBody.setForce( y = Ball.FORCE/divisor, x = 0, z = 0 )
@@ -207,14 +243,12 @@ class Ball:
 				self.ballBody.setForce( y = 0, x = 0, z = Ball.STATIC_JUMP_FORCE)
 				self.jumping = False
 			else:
-				now = globalClock.getLongTime()
 				elapsed = now - self.jumpStarted
-
 				if elapsed > 0.0 and elapsed < Ball.MAX_JUMP_REACH_TIME:
 					self.ballBody.setForce( y = 0, x = 0, z = Ball.JUMP_FORCE)
 				elif elapsed > Ball.MAX_JUMP_REACH_TIME:
 					self.jumping = False 
-					
+	
 		# Keep the body in 2d position
 		self.alignBodyTo2d()
 		

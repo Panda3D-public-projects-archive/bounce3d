@@ -3,6 +3,8 @@ from pandac.PandaModules import (
 	Quat,OdeBody, OdeMass, OdeSphereGeom, BitMask32)	
 from pandac.PandaModules import OdePlane2dJoint
 from pandac.PandaModules import Vec4
+from pandac.PandaModules import VBase3
+
 from direct.directtools.DirectGeometry import LineNodePath
 
 from direct.directbase.DirectStart import *
@@ -58,7 +60,7 @@ class Ball:
 			self.lastDrawTime2 = 0.0
 			self.lines = LineNodePath(parent = render, thickness = 3.0, colorVec = Vec4(1, 0, 0, 1))
 			self.lines2 = LineNodePath(parent = render, thickness = 3.0, colorVec = Vec4(0, 0, 1, 1))
-
+			self.lines3 = LineNodePath(parent = render, thickness = 3.0, colorVec = Vec4(0, 1, 0, 1))
 		if Ball.JUMP_DEBUG:
 			self.lastTakeoffTime = 0.0
 		self.moveLeft = False
@@ -104,7 +106,20 @@ class Ball:
 		self.moveRight = False
 	def isMovingRight( self ):
 		return self.moveRight
-
+		
+	def perpendicularUnitWithFixedX(self, v):
+		out = VBase3()
+		a = 1.0
+		out.setX(0.0)
+		if v.getY() != 0.0:
+			out.setY(-(v.getZ()*a)/v.getY())
+			out.setZ(a)
+		else:
+			out.setY(a)
+			out.setZ(0.0)		
+		out /= out.length()
+		return out
+		
 	def jumpOn( self ):
 		if self.isColliding() == True and self.lastCollisionIsGround:
 			self.jumping = True
@@ -217,12 +232,16 @@ class Ball:
 		
 		if Ball.MOVEMENT_DEBUG and now - self.lastDrawTime2 > 0.2:
 			v = body.getLinearVel()
+			v2 = self.perpendicularUnitWithFixedX(v)
 			self.lines.reset()
+			self.lines3.reset()
 			x = body.getPosition().getX() + 1.2 # This will bring the line in front of the ball
 			y = body.getPosition().getY()
 			z = body.getPosition().getZ()
 			self.lines.drawLines([((x, y, z), (x+v.getX(), y+v.getY(), z+v.getZ()))])
+			self.lines3.drawLines([((x, y, z), (x+v2.getX(), y+v2.getY(), z+v2.getZ()))])
 			self.lines.create()
+			self.lines3.create()
 			self.lastDrawTime2 = 0.0
 
 		''' Can move better when on (touching) something, moving in the air is harder '''

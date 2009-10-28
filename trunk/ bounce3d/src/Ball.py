@@ -231,7 +231,7 @@ class Ball:
 		   divisor = 1.0
 
 		if self.moveLeft:
-			self.ballBody.setForce(  y = -Ball.TORQUE/divisor, x = 0, z = 0 )
+			self.ballBody.setForce( y = -Ball.FORCE/divisor, x = 0, z = 0 )
 			self.ballBody.setTorque( y = -Ball.TORQUE/divisor, x = 0, z = 0 )	
 		elif self.moveRight:
 			self.ballBody.setForce( y = Ball.FORCE/divisor, x = 0, z = 0 )

@@ -98,7 +98,7 @@ class Ball:
 		out = VBase3()
 		out.setX(0.0)
 		out.setY(0.0)
-		out.setZ(9.8)
+		out.setZ(-9.8)
 		return out
 	def angleVec3( self, v1, v2):
 		return math.acos(self.dotProductVec3(v1, v2)/(v1.length()*v2.length()))

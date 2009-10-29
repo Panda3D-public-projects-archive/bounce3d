@@ -1,3 +1,4 @@
+import math
 
 from pandac.PandaModules import (
 	Quat,OdeBody, OdeMass, OdeSphereGeom, BitMask32)	
@@ -93,6 +94,43 @@ class Ball:
 		ballGeom.setBody( ballBody )
 		return ballGeom
 	
+	def getDefaultGravityVec3( self ):
+		out = VBase3()
+		out.setX(0.0)
+		out.setY(0.0)
+		out.setZ(9.8)
+		return out
+	def angleVec3( self, v1, v2):
+		return math.acos(self.dotProductVec3(v1, v2)/(v1.length()*v2.length()))
+	def dotProductVec3( self, v1, v2 ):
+		return v1.getX()*v2.getX()+v1.getY()*v2.getY()+v1.getZ()*v2.getZ()
+	def moveBall( self, normalGravity, func ):
+		g = self.world.getGravity()
+		angle = self.angleVec3(g,self.getDefaultGravityVec3())
+		if not (angle > math.pi/3.99 and angle < math.pi / 1.99):
+			if normalGravity:
+				func()
+		else:
+			if not normalGravity:
+				func()
+		return
+	def arrowRightDown( self ):
+		self.moveBall(1,self.startMoveRight)
+	def arrowRightUp( self ):
+		self.moveBall(1,self.stopMoveRight)
+	def arrowLeftDown( self ):
+		self.moveBall(1,self.startMoveLeft)
+	def arrowLeftUp( self ):
+		self.moveBall(1,self.stopMoveLeft)
+	def arrowUpDown( self ):
+		self.moveBall(0,self.startMoveRight)
+	def arrowUpUp( self ):
+		self.moveBall(0,self.stopMoveRight)
+	def arrowDownDown( self ):
+		self.moveBall(0,self.startMoveLeft)
+	def arrowDownUp( self ):
+		self.moveBall(0,self.stopMoveLeft)
+
 	def startMoveLeft( self ):
 		self.moveLeft = True
 	def stopMoveLeft( self ):

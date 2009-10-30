@@ -8,13 +8,13 @@ from pandac.PandaModules import TextNode
 
 from KeyboardControl import KeyboardControl
 from GameModel import GameModel
-from GameControl import GameControl
+from GameLoop import GameLoop
 
 class GameApplication(DirectObject):
 	
 	def __init__(self):
 		model = GameModel( self )
-		loop = GameControl( 60.0, model )
+		loop = GameLoop( model )
 		keys = KeyboardControl( model )
 		
 		# http://www.panda3d.org/wiki/index.php/Tasks

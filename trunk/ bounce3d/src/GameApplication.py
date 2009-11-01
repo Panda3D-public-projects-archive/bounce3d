@@ -6,16 +6,17 @@ from direct.showbase.DirectObject import DirectObject
 from direct.gui.OnscreenText import OnscreenText
 from pandac.PandaModules import TextNode
 
-from KeyboardControl import KeyboardControl
-from GameModel import GameModel
+from GameControl import GameControl
 from GameLoop import GameLoop
+
+from model.GameModel import GameModel
 
 class GameApplication(DirectObject):
 	
 	def __init__(self):
 		model = GameModel( self )
 		loop = GameLoop( model )
-		keys = KeyboardControl( model )
+		keys = GameControl( model )
 		
 		# http://www.panda3d.org/wiki/index.php/Tasks
 		# http://www.panda3d.org/apiref.php?page=TaskManager#doMethodLater

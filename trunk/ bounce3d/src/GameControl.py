@@ -2,11 +2,14 @@
 # keyboard
 from direct.showbase.DirectObject import DirectObject
 
-from GameModel import GameModel
-from Event import Event, createNamedEvent
+from model.GameModel import GameModel
+from event.Event import Event, createNamedEvent
 
-class KeyboardControl(DirectObject):
-	''' @author J3lly '''
+class GameControl(DirectObject):
+	'''
+        Currently the game can be controlled with a keaboard.
+        @author J3lly
+        '''
 
 	PLAYER_RIGHT_KEY = "arrow_right"
 	PLAYER_LEFT_KEY = "arrow_left"
@@ -46,19 +49,19 @@ class KeyboardControl(DirectObject):
 		self.accept(playerJumpOn, ball.jumpOn) 	
 		self.accept(playerJumpOff, ball.jumpOff)
 
-		self.accept(KeyboardControl.PLAYER_RIGHT_KEY, ball.arrowRightDown)
-		self.accept(KeyboardControl.PLAYER_RIGHT_KEY + "-up", ball.arrowRightUp)
-		self.accept(KeyboardControl.PLAYER_LEFT_KEY, ball.arrowLeftDown)
-		self.accept(KeyboardControl.PLAYER_LEFT_KEY + "-up", ball.arrowLeftUp)
-		self.accept(KeyboardControl.PLAYER_UP_KEY, ball.arrowUpDown)
-		self.accept(KeyboardControl.PLAYER_UP_KEY + "-up", ball.arrowUpUp)
-		self.accept(KeyboardControl.PLAYER_DOWN_KEY, ball.arrowDownDown)
-		self.accept(KeyboardControl.PLAYER_DOWN_KEY + "-up", ball.arrowDownUp)
-		self.accept(KeyboardControl.PLAYER_JUMP, player.jumpOn)
-		self.accept(KeyboardControl.PLAYER_JUMP + "-up", player.jumpOff)
+		self.accept(GameControl.PLAYER_RIGHT_KEY, ball.arrowRightDown)
+		self.accept(GameControl.PLAYER_RIGHT_KEY + "-up", ball.arrowRightUp)
+		self.accept(GameControl.PLAYER_LEFT_KEY, ball.arrowLeftDown)
+		self.accept(GameControl.PLAYER_LEFT_KEY + "-up", ball.arrowLeftUp)
+		self.accept(GameControl.PLAYER_UP_KEY, ball.arrowUpDown)
+		self.accept(GameControl.PLAYER_UP_KEY + "-up", ball.arrowUpUp)
+		self.accept(GameControl.PLAYER_DOWN_KEY, ball.arrowDownDown)
+		self.accept(GameControl.PLAYER_DOWN_KEY + "-up", ball.arrowDownUp)
+		self.accept(GameControl.PLAYER_JUMP, player.jumpOn)
+		self.accept(GameControl.PLAYER_JUMP + "-up", player.jumpOff)
 		
-		self.accept(KeyboardControl.TURN_GRAVITY, model.turnGravityTask )
-		self.accept(KeyboardControl.TURN_GRAVITY2, model.turnGravityTask2 )
+		self.accept(GameControl.TURN_GRAVITY, model.turnGravityTask )
+		self.accept(GameControl.TURN_GRAVITY2, model.turnGravityTask2 )
 		
 		model.isListening = True
 		

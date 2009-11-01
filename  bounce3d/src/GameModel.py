@@ -152,8 +152,8 @@ class GameModel:
 	def turnGravityTask2(self):
 		''''''
 		g = self.world.getGravity()
-		g2 = self.ball.perpendicularUnitVecWithFixedX(g)
-		g2 *= 9.8
+		g2 = self.ball.perpendicularUnitVec3WithFixedX(g)
+		g2 *= g.length()
 		self.world.setGravity( g2 )
 	
 	def updateObjects(self):

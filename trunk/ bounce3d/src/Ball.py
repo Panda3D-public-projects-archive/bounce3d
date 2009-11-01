@@ -145,7 +145,7 @@ class Ball:
 	def isMovingRight( self ):
 		return self.moveRight
 		
-	def perpendicularUnitVecWithFixedX(self, v):
+	def perpendicularUnitVec3WithFixedX(self, v):
 		out = VBase3()
 		a = 1.0
 		out.setX(0.0)
@@ -270,7 +270,7 @@ class Ball:
 		
 		if Ball.MOVEMENT_DEBUG and now - self.lastDrawTime2 > 0.2:
 			v = body.getLinearVel()
-			v2 = self.perpendicularUnitVecWithFixedX(v)
+			v2 = self.perpendicularUnitVec3WithFixedX(v)
 			self.lines.reset()
 			self.lines3.reset()
 			x = body.getPosition().getX() + 1.2 # This will bring the line in front of the ball
@@ -291,10 +291,10 @@ class Ball:
 			factor = 1.0
 			if self.moveLeft:
 				factor = -1.0
-			v3 = self.perpendicularUnitVecWithFixedX(g)
+			v3 = self.perpendicularUnitVec3WithFixedX(g)
 			v3 *= factor*Ball.FORCE/divisor
 			self.ballBody.setForce( y = v3.getY() , x = v3.getX(), z = v3.getZ())
-			v3 = self.perpendicularUnitVecWithFixedX(g)
+			v3 = self.perpendicularUnitVec3WithFixedX(g)
 			v3 *= factor*Ball.TORQUE/divisor
 			self.ballBody.setTorque( y = v3.getY(), x = v3.getX(), z = v3.getX())	
 

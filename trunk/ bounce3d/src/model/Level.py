@@ -1,4 +1,6 @@
-from pandac.PandaModules import *
+from pandac.PandaModules import OdeTriMeshData
+from pandac.PandaModules import OdeTriMeshGeom
+from pandac.PandaModules import OdeTriMeshGeom
 
 class Level:
 	

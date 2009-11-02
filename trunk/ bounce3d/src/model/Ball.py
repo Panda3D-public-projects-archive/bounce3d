@@ -1,14 +1,14 @@
 import math
 
 from pandac.PandaModules import (
-	Quat,OdeBody, OdeMass, OdeSphereGeom, BitMask32)	
+	Quat,OdeBody, OdeMass, OdeSphereGeom, BitMask32)
 from pandac.PandaModules import OdePlane2dJoint
 from pandac.PandaModules import Vec4
 from pandac.PandaModules import VBase3
 
 from direct.directtools.DirectGeometry import LineNodePath
 
-from direct.directbase.DirectStart import *
+# from direct.directbase.DirectStart import *
 
 class Ball:
 	
@@ -33,7 +33,7 @@ class Ball:
 
 	def __init__(
 	self,
-	application,
+	hud,
 	world,
 	space,
 	name = NAME_DEFAULT, 
@@ -46,7 +46,7 @@ class Ball:
 		self.pos = pos
 		self.hpr = hpr
 		self.scale = scale
-		self.application = application
+		self.hud = hud
 		self.world = world
 		self.space = space
 		self.jumping = False
@@ -186,7 +186,7 @@ class Ball:
 				# Draw debug info
 				if self.lastTakeoffTime == 0.0:
 					self.lastTakeoffTime = now
-					self.application.updateHUD(", Ball state: AIR")
+					self.hud.updateHUD(", Ball state: AIR")
 			return False
 	
 	def isGroundCollision( self, bodyPos, colPos ):
@@ -258,9 +258,9 @@ class Ball:
 			if previous != self.lastCollisionIsGround or self.lastTakeoffTime != 0.0:
 				self.lastTakeoffTime = 0.0
 				if self.lastCollisionIsGround:
-					self.application.updateHUD(", Ball state: GROUND")
+					self.hud.updateHUD(", Ball state: GROUND")
 				else:
-					self.application.updateHUD(", Ball state: ???")
+					self.hud.updateHUD(", Ball state: ???")
 					
 	def updateModelNode(self):
 		''' Update objects after one physics iteration '''		

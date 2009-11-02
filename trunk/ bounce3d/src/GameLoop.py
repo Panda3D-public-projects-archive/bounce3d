@@ -13,12 +13,12 @@ class GameLoop:
 		# Setup the contact joints
 		self.model.space.autoCollide()
 
-                dt = globalClock.getDt()
-                self.model.world.quickStep( dt )
-                
-                self.model.updateObjects()
-            
-                # Clear the contact joints
-                self.model.contactgroup.empty()
-                
-                return Task.cont
+		dt = globalClock.getDt()
+		self.model.world.quickStep( dt )
+
+		self.model.updateObjects()
+
+		# Clear the contact joints
+		self.model.contactgroup.empty()
+
+		return Task.cont

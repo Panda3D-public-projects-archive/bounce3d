@@ -3,13 +3,14 @@
 from direct.showbase.DirectObject import DirectObject
 
 from model.GameModel import GameModel
-from event.Event import Event, createNamedEvent
+from event.Event import createNamedEvent
+from event.EventType import EventType
 
 class GameControl(DirectObject):
 	'''
-        Currently the game can be controlled with a keaboard.
-        @author J3lly
-        '''
+	Currently the game can be controlled with a keaboard.
+	@author J3lly
+	'''
 
 	PLAYER_RIGHT_KEY = "arrow_right"
 	PLAYER_LEFT_KEY = "arrow_left"
@@ -24,29 +25,29 @@ class GameControl(DirectObject):
 		ball = model.getBall()
 		
 		playerMoveRightOn = createNamedEvent(
-			player.name, Event.PLAYER_MOVE_RIGHT_ON
+			player.name, EventType.PLAYER_MOVE_RIGHT_ON
 		)
 		playerMoveRightOff = createNamedEvent(
-			player.name, Event.PLAYER_MOVE_RIGHT_OFF
+			player.name, EventType.PLAYER_MOVE_RIGHT_OFF
 		)
 		playerMoveLeftOn = createNamedEvent(
-			player.name, Event.PLAYER_MOVE_LEFT_ON
+			player.name, EventType.PLAYER_MOVE_LEFT_ON
 		)
 		playerMoveLeftOff = createNamedEvent(
-			player.name, Event.PLAYER_MOVE_LEFT_OFF
+			player.name, EventType.PLAYER_MOVE_LEFT_OFF
 		)
 		playerJumpOn = createNamedEvent(
-			player.name, Event.PLAYER_JUMP_ON
+			player.name, EventType.PLAYER_JUMP_ON
 		)
 		playerJumpOff = createNamedEvent(
-			player.name, Event.PLAYER_JUMP_OFF
+			player.name, EventType.PLAYER_JUMP_OFF
 		)
 
 		self.accept(playerMoveRightOn, ball.startMoveRight)
-		self.accept(playerMoveRightOff, ball.stopMoveRight)		
+		self.accept(playerMoveRightOff, ball.stopMoveRight)
 		self.accept(playerMoveLeftOn, ball.startMoveLeft)
 		self.accept(playerMoveLeftOff, ball.stopMoveLeft)
-		self.accept(playerJumpOn, ball.jumpOn) 	
+		self.accept(playerJumpOn, ball.jumpOn)
 		self.accept(playerJumpOff, ball.jumpOff)
 
 		self.accept(GameControl.PLAYER_RIGHT_KEY, ball.arrowRightDown)
@@ -64,6 +65,3 @@ class GameControl(DirectObject):
 		self.accept(GameControl.TURN_GRAVITY2, model.turnGravityTask2 )
 		
 		model.isListening = True
-		
-		
-	 

@@ -1,7 +1,4 @@
 
-# loader, task manager
-import direct.directbase.DirectStart
-
 # mathematics
 import math
 from pandac.PandaModules import Quat
@@ -42,8 +39,6 @@ from model.Player import Player
 from model.Coin import Coin
 from model.MovingPlane import MovingPlane
 
-from event.Event import Event
-
 class GameModel:
 	'''
 	Represents the world data.
@@ -52,26 +47,30 @@ class GameModel:
 	'''
 
 	def __init__(self, application):
-		base.disableMouse()
-		base.camera.lookAt(0, 0, 6)
-		base.setBackgroundColor(0,0,0)
+		
+		self.app = application
+		self.engine = self.app.engine
+	
+		self.engine.disableMouse()
+		self.engine.camera.lookAt(0, 0, 6)
+		self.engine.setBackgroundColor(0,0,0)
 		
 		self.isListening = False
 		
-		self.application = application
+		
 		self.world = self.createWorld()
 		self.contactgroup = OdeJointGroup()
 		self.space = self.createCollisionSpace(self.world, self.contactgroup)
 		self.space.setCollisionEvent("ode-collision")
-		base.accept("ode-collision", self.onCollision)
+		self.engine.accept("ode-collision", self.onCollision)
 	
 		self.setLights()
 		
-		self.ball = Ball(self.application, self.world, self.space, "Johanneksen pallo", pos=(0,0,10))	
+		self.ball = Ball(self.app, self.world, self.space, "Johanneksen pallo", pos=(0,0,10))
 		#ballBody = self.ball.getBody()
 		#ballJoint = OdePlane2dJoint(self.world)
 		#ballJoint.attachBody(ballBody, 1)
-		self.kentta = Level(self.space)		
+		self.kentta = Level(self.space)
 		self.player = Player("Johannes")
 		
 		plane = MovingPlane( self.space, pos = (0,0,5) )
@@ -83,15 +82,15 @@ class GameModel:
 		self.coins.append( Coin(self.world, self.space, pos = (0,5,15) ) )
 		self.coins.append( Coin(self.world, self.space, pos = (0,10,17) ) )
 
-		base.camera.setPos(40, 0, 2)
+		self.engine.camera.setPos(40, 0, 2)
 
-                #self.traverser = CollisionTraverser('collision traverser')
+		#self.traverser = CollisionTraverser('collision traverser')
 
 		#base.cTrav = self.traverser
 		#self.collisionQueue = CollisionHandlerQueue()
 		#test = self.ball.getModelNode().attachNewNode(CollisionNode('colNode'))
 		#test.node().addSolid(CollisionSphere(0, 0, 0, 12))
-                #self.traverser.addCollider(test, self.collisionQueue)
+		#self.traverser.addCollider(test, self.collisionQueue)
 		#self.traverser.addCollider(self.ball.getBody(), onBallCollision)
 		
 	def setLights(self):
@@ -165,10 +164,10 @@ class GameModel:
 			coin.updateModelNode()
 		
 		x,y,z = self.ball.getPosition()
-		base.camera.lookAt( x,y,z+1 )
+		self.engine.camera.lookAt( x,y,z+1 )
 		# alter only y-axis
-		cx,cy,cz = base.camera.getPos()
-		base.camera.setPos( cx, y, cz )
+		cx,cy,cz = self.engine.camera.getPos()
+		self.engine.camera.setPos( cx, y, cz )
 	
 	def getBall(self):
 		return self.ball

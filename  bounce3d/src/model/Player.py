@@ -1,6 +1,7 @@
 from direct.showbase.ShowBase import ShowBase
 
-from event.Event import Event, createNamedEvent
+from event.EventType import EventType
+from event.Event import createNamedEvent
 
 class Player:
 
@@ -14,21 +15,21 @@ class Player:
     self.left = Player.LEFT_DEFAULT
 
   def jumpOn(self):
-    jumpEvent = createNamedEvent(self.name, Event.PLAYER_JUMP_ON)
+    jumpEvent = createNamedEvent(self.name, EventType.PLAYER_JUMP_ON)
     messenger.send(jumpEvent)
 
   def jumpOff(self):
-    jumpEvent = createNamedEvent(self.name, Event.PLAYER_JUMP_OFF)
+    jumpEvent = createNamedEvent(self.name, EventType.PLAYER_JUMP_OFF)
     messenger.send(jumpEvent)
 
   def moveRightOn(self):
     self.right= True
-    moveEvent = createNamedEvent(self.name, Event.PLAYER_MOVE_RIGHT_ON)
+    moveEvent = createNamedEvent(self.name, EventType.PLAYER_MOVE_RIGHT_ON)
     messenger.send(moveEvent)
 
   def moveRightOff(self):
     self.right = False
-    moveEvent = createNamedEvent(self.name, Event.PLAYER_MOVE_RIGHT_OFF)
+    moveEvent = createNamedEvent(self.name, EventType.PLAYER_MOVE_RIGHT_OFF)
     messenger.send(moveEvent)
 
   def isRightOn(self):
@@ -36,12 +37,12 @@ class Player:
 
   def moveLeftOn(self):
     self.left = True
-    moveEvent = createNamedEvent(self.name, Event.PLAYER_MOVE_LEFT_ON)
+    moveEvent = createNamedEvent(self.name, EventType.PLAYER_MOVE_LEFT_ON)
     messenger.send(moveEvent)
 
   def moveLeftOff(self):
     self.left = False
-    moveEvent = createNamedEvent(self.name, Event.PLAYER_MOVE_LEFT_OFF)
+    moveEvent = createNamedEvent(self.name, EventType.PLAYER_MOVE_LEFT_OFF)
     messenger.send(moveEvent)
 
   def isLeftOn(self):

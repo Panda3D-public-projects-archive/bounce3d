@@ -42,8 +42,6 @@ from model.MovingPlane import MovingPlane
 class GameModel:
 	'''
 	Represents the world data.
-	TODO: separate physics from this class
-	Coordinatates information between Coin and Ball.
 	'''
 
 	def __init__(self, application):
@@ -66,22 +64,28 @@ class GameModel:
 	
 		self.setLights()
 		
-		self.ball = Ball(self.app, self.world, self.space, "Johanneksen pallo", pos=(0,0,10))
+		self.ball = Ball(self.app, self.world, self.space,
+		    "Johanneksen pallo", pos=(0.0,-20.0,10.0))
 		#ballBody = self.ball.getBody()
 		#ballJoint = OdePlane2dJoint(self.world)
 		#ballJoint.attachBody(ballBody, 1)
 		self.kentta = Level(self.space)
 		self.player = Player("Johannes")
 		
-		plane = MovingPlane( self.space, pos = (0,0,5) )
-		plane = MovingPlane( self.space, pos = (0,5,10 ) )
-		plane = MovingPlane( self.space, pos = (0,10,15) )
+		dim = (5.0,5.0,1.0)
+		self.plains = []
+		self.plains.append( MovingPlane( self.space, (0.0,0.0,5.0),   dim ) )
+		self.plains.append( MovingPlane( self.space, (0.0,5.0,10.0),  dim ) )
+		self.plains.append( MovingPlane( self.space, (0.0,10.0,15.0), dim ) )
 		
 		# a set of coins to be collected
 		self.coins = []
 		self.coins.append( Coin(self.world, self.space, pos = (0,5,15) ) )
 		self.coins.append( Coin(self.world, self.space, pos = (0,10,17) ) )
 
+		self.exit = MovingPlane( self.space, pos = (0.0,25.0,1.0), dim = (1.0,1.0,1.0) )
+		self.exitid = self.exit.getId()
+		
 		self.engine.camera.setPos(40, 0, 2)
 
 		#self.traverser = CollisionTraverser('collision traverser')
@@ -163,6 +167,9 @@ class GameModel:
 		for coin in self.coins:
 			coin.updateModelNode()
 		
+		for plain in self.plains:
+			plain.updateModelNode()
+
 		x,y,z = self.ball.getPosition()
 		self.engine.camera.lookAt( x,y,z+1 )
 		# alter only y-axis
@@ -187,5 +194,10 @@ class GameModel:
 		for coin in self.coins:
 			if body1 == coin.getBody() and body2 == self.ball.getBody():
 				coin.collect()
-			
+		
+		exit = self.exit.getGeom()
+		if geom1 == exit or geom2 == exit:
+			print 'Game over'
+			# send event Level Restart
+	# end onCollision
 		

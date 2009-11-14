@@ -1,2 +1,2 @@
-ppython main.py
+ppython GameApplication.py
 pause

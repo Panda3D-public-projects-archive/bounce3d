@@ -19,8 +19,9 @@ class GameControl(DirectObject):
 	PLAYER_JUMP = "space"
 	TURN_GRAVITY = "g"
 	TURN_GRAVITY2 = "h"
+	RESTART_LEVEL = "r"
 
-	def __init__(self, model):
+	def __init__(self, model, app):
 		player = model.getPlayer()
 		ball = model.getBall()
 		
@@ -58,10 +59,13 @@ class GameControl(DirectObject):
 		self.accept(GameControl.PLAYER_UP_KEY + "-up", ball.arrowUpUp)
 		self.accept(GameControl.PLAYER_DOWN_KEY, ball.arrowDownDown)
 		self.accept(GameControl.PLAYER_DOWN_KEY + "-up", ball.arrowDownUp)
+		
 		self.accept(GameControl.PLAYER_JUMP, player.jumpOn)
 		self.accept(GameControl.PLAYER_JUMP + "-up", player.jumpOff)
 		
 		self.accept(GameControl.TURN_GRAVITY, model.turnGravityTask )
 		self.accept(GameControl.TURN_GRAVITY2, model.turnGravityTask2 )
+		
+		self.accept(GameControl.RESTART_LEVEL, app.restart )
 		
 		model.isListening = True

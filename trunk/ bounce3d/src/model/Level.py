@@ -4,7 +4,7 @@ from pandac.PandaModules import OdeTriMeshGeom
 
 class Level:
 	
-	MODEL_EGG_DEFAULT = "../egg/testilevel.egg"
+	MODEL_EGG_DEFAULT = "../egg/testilevel_visual.egg"
 	COLLISION_EGG_DEFAULT = "../egg/testilevel_collision.egg"
 	POS_DEFAULT = ( 0,0,0 )
 	SCALE_DEFAULT = ( 1,1,1 )

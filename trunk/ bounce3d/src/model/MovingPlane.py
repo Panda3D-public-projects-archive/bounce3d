@@ -40,3 +40,7 @@ class MovingPlane:
 	
 	def getGeom(self):
 		return self.geom
+	
+	def removeNode(self):
+	    self.model.removeNode()
+	    

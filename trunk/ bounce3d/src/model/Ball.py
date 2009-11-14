@@ -352,3 +352,5 @@ class Ball:
 	def getModelNode( self ):
                 return self.modelNode
 	
+	def removeNode(self):
+	    self.modelNode.removeNode()

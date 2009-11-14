@@ -5,9 +5,7 @@ from pandac.PandaModules import Quat
 from pandac.PandaModules import Vec4
 
 # physics - game world
-from pandac.PandaModules import OdeWorld
-from pandac.PandaModules import OdeBody
-from pandac.PandaModules import OdeMass
+from pandac.PandaModules import (OdeWorld, OdeBody, OdeMass)
 
 # physics - collision
 from pandac.PandaModules import OdeSimpleSpace
@@ -20,10 +18,6 @@ from pandac.PandaModules import OdePlaneGeom
 from pandac.PandaModules import BitMask32
 from pandac.PandaModules import CardMaker
 from pandac.PandaModules import OdePlane2dJoint
-
-# lights
-from pandac.PandaModules import AmbientLight
-from pandac.PandaModules import DirectionalLight
 
 from pandac.PandaModules import CollisionNode
 from pandac.PandaModules import CollisionSphere
@@ -38,33 +32,40 @@ from model.Level import Level
 from model.Player import Player
 from model.Coin import Coin
 from model.MovingPlane import MovingPlane
-
+		
 class GameModel:
 	'''
 	Represents the world data.
 	'''
 
-	def __init__(self, application):
+	def __init__(self, app):
+		engine = app.engine
+		self.camera = engine.camera
 		
-		self.app = application
-		self.engine = self.app.engine
-	
-		self.engine.disableMouse()
-		self.engine.camera.lookAt(0, 0, 6)
-		self.engine.setBackgroundColor(0,0,0)
-		
+		self.hud = app.hud
 		self.isListening = False
+				
+		# Holds rigid bodies, joints, controls global params
+		self.world = OdeWorld()
+		self.world.setGravity(0,0,-9.8)
+
+		self.world.initSurfaceTable(num_surfaces = 1)
+		# http://www.panda3d.org/apiref.php?page=OdeWorld#setSurfaceEntry
+		# http://www.panda3d.org/wiki/index.php/Collision_Detection_with_ODE
+		# (surfaceId1, surfaceId2, mu, bounce, bounce_vel, soft_erp, soft_cfm, slip, dampen)
+		self.world.setSurfaceEntry(0, 0, 0.8, 0.0, 9.1, 0.9, 0.00001, 100.0, 0.002)
 		
-		
-		self.world = self.createWorld()
 		self.contactgroup = OdeJointGroup()
-		self.space = self.createCollisionSpace(self.world, self.contactgroup)
-		self.space.setCollisionEvent("ode-collision")
-		self.engine.accept("ode-collision", self.onCollision)
-	
-		self.setLights()
+
+		self.space = OdeHashSpace()
+		self.space.setAutoCollideWorld(self.world)
+		self.space.setAutoCollideJointGroup( self.contactgroup )		
 		
-		self.ball = Ball(self.app, self.world, self.space,
+		self.space.setCollisionEvent("ode-collision")
+		
+		engine.accept("ode-collision", self.onCollision)
+				
+		self.ball = Ball(self.hud, self.world, self.space,
 		    "Johanneksen pallo", pos=(0.0,-20.0,10.0))
 		#ballBody = self.ball.getBody()
 		#ballJoint = OdePlane2dJoint(self.world)
@@ -73,10 +74,10 @@ class GameModel:
 		self.player = Player("Johannes")
 		
 		dim = (5.0,5.0,1.0)
-		self.plains = []
-		self.plains.append( MovingPlane( self.space, (0.0,0.0,5.0),   dim ) )
-		self.plains.append( MovingPlane( self.space, (0.0,5.0,10.0),  dim ) )
-		self.plains.append( MovingPlane( self.space, (0.0,10.0,15.0), dim ) )
+		self.planes = []
+		self.planes.append( MovingPlane( self.space, (0.0,0.0,5.0),   dim ) )
+		self.planes.append( MovingPlane( self.space, (0.0,5.0,10.0),  dim ) )
+		self.planes.append( MovingPlane( self.space, (0.0,10.0,15.0), dim ) )
 		
 		# a set of coins to be collected
 		self.coins = []
@@ -85,68 +86,7 @@ class GameModel:
 
 		self.exit = MovingPlane( self.space, pos = (0.0,25.0,1.0), dim = (1.0,1.0,1.0) )
 		self.exitid = self.exit.getId()
-		
-		self.engine.camera.setPos(40, 0, 2)
-
-		#self.traverser = CollisionTraverser('collision traverser')
-
-		#base.cTrav = self.traverser
-		#self.collisionQueue = CollisionHandlerQueue()
-		#test = self.ball.getModelNode().attachNewNode(CollisionNode('colNode'))
-		#test.node().addSolid(CollisionSphere(0, 0, 0, 12))
-		#self.traverser.addCollider(test, self.collisionQueue)
-		#self.traverser.addCollider(self.ball.getBody(), onBallCollision)
-		
-	def setLights(self):
-		''' @author latenssi '''
-		# Ambient Light
-		ambientLight = AmbientLight( 'ambientLight' )
-		ambientLight.setColor( Vec4( 0.1, 0.1, 0.1, 1 ) )
-		ambientLightNP = render.attachNewNode( ambientLight.upcastToPandaNode() )
-		render.setLight(ambientLightNP)
-
-		# Directional light 01
-		directionalLight = DirectionalLight( "directionalLight" )
-		directionalLight.setColor( Vec4( 1, 1, 1, 1 ) )
-		directionalLightNP = render.attachNewNode( directionalLight.upcastToPandaNode() )
-		directionalLightNP.setPos(10,-20,20)
-		directionalLightNP.lookAt(0,0,0)
-		render.setLight(directionalLightNP)
-
-		# Directional light 02
-		directionalLight = DirectionalLight( "directionalLight" )
-		directionalLight.setColor( Vec4( 1, 1, 1, 1 ) )
-		directionalLightNP = render.attachNewNode( directionalLight.upcastToPandaNode() )
-		directionalLightNP.lookAt(0,0,0)
-		directionalLightNP.setPos(10,20,20)
-		render.setLight(directionalLightNP)
-		
-	def createWorld(self):
-		'''
-		PRE: none
-		POST: new physics world
-		'''
-		# Holds rigid bodies, joints, controls global params
-		world = OdeWorld()
-		world.setGravity(0,0,-9.8)
-
-		world.initSurfaceTable(num_surfaces = 1)
-		# http://www.panda3d.org/apiref.php?page=OdeWorld#setSurfaceEntry
-		# http://www.panda3d.org/wiki/index.php/Collision_Detection_with_ODE
-		# (surfaceId1, surfaceId2, mu, bounce, bounce_vel, soft_erp, soft_cfm, slip, dampen)
-		world.setSurfaceEntry(0, 0, 0.8, 0.0, 9.1, 0.9, 0.00001, 100.0, 0.002)
-		return world
-
-	def createCollisionSpace(self, world, joints):
-		'''
-		PRE: initialized world and joints
-		POST: new collision space
-		'''
-		space = OdeHashSpace()
-		space.setAutoCollideWorld(world)
-		space.setAutoCollideJointGroup( joints )
-		return space
-		
+	
 	def turnGravityTask(self):
 		''''''
 		g = self.world.getGravity()
@@ -162,19 +102,16 @@ class GameModel:
 	
 	def updateObjects(self):
 		''' Update objects after one physics iteration '''
-		self.ball.updateModelNode()
-
-		for coin in self.coins:
-			coin.updateModelNode()
 		
-		for plain in self.plains:
-			plain.updateModelNode()
+		self.ball.updateModelNode()
+		map( Coin.updateModelNode, self.coins)
+		map( MovingPlane.updateModelNode, self.planes)
 
 		x,y,z = self.ball.getPosition()
-		self.engine.camera.lookAt( x,y,z+1 )
+		self.camera.lookAt( x,y,z+1 )
 		# alter only y-axis
-		cx,cy,cz = self.engine.camera.getPos()
-		self.engine.camera.setPos( cx, y, cz )
+		cx,cy,cz = self.camera.getPos()
+		self.camera.setPos( cx, y, cz )
 	
 	def getBall(self):
 		return self.ball
@@ -198,6 +135,12 @@ class GameModel:
 		exit = self.exit.getGeom()
 		if geom1 == exit or geom2 == exit:
 			print 'Game over'
-			# send event Level Restart
+			# TODO: send event Level Restart
+	
 	# end onCollision
-		
+	
+	def cleanUp(self):
+	    map( MovingPlane.removeNode, self.planes )
+	    map( Coin.removeNode, self.coins )
+	    self.ball.removeNode()
+	

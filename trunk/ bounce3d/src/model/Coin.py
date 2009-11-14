@@ -52,3 +52,7 @@ class Coin:
             
     def getBody(self):
             return self.boxBody
+    
+    def removeNode(self):
+	    self.box.removeNode()
+    

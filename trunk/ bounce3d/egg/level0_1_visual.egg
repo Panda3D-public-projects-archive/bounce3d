@@ -1,7 +1,7 @@
 <CoordinateSystem> { Y-Up }
 
 <Comment> {
-  "maya2egg2009 -bface 'X:\testilevel_visual.mb' 'X:\testilevel_visual.egg'"
+  "maya2egg2009 -bface 'X:\level0_1_visual.mb' 'X:\level0_1_visual.egg'"
 }
 <Group> groundPlane_transform {
 }

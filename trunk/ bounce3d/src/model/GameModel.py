@@ -32,13 +32,16 @@ from model.Level import Level
 from model.Player import Player
 from model.Coin import Coin
 from model.MovingPlane import MovingPlane
+from event.Event import createNamedEvent
+from event.EventType import EventType
 		
 class GameModel:
 	'''
 	Represents the world data.
 	'''
-
-	def __init__(self, app):
+	
+	def __init__(self, app, mapNo):
+		self.app = app
 		engine = app.engine
 		self.camera = engine.camera
 		
@@ -70,7 +73,7 @@ class GameModel:
 		#ballBody = self.ball.getBody()
 		#ballJoint = OdePlane2dJoint(self.world)
 		#ballJoint.attachBody(ballBody, 1)
-		self.kentta = Level(self.space)
+		self.kentta = Level(self.space, mapNo)
 		self.player = Player("Johannes")
 		
 		dim = (5.0,5.0,1.0)
@@ -134,10 +137,11 @@ class GameModel:
 		
 		exit = self.exit.getGeom()
 		if geom1 == exit or geom2 == exit:
-			print 'Game over'
+			self.app.nextLvl()
 			# TODO: send event Level Restart
 	
 	# end onCollision
+	
 	
 	def cleanUp(self):
 	    map( MovingPlane.removeNode, self.planes )

@@ -40,6 +40,9 @@ class GameModel:
 	Represents the world data.
 	'''
 	
+	''' Kerattavat kolikot '''
+	goal = 0
+	
 	def __init__(self, app, mapNo):
 		self.app = app
 		engine = app.engine
@@ -86,9 +89,11 @@ class GameModel:
 		self.coins = []
 		self.coins.append( Coin(self.world, self.space, pos = (0,5,15) ) )
 		self.coins.append( Coin(self.world, self.space, pos = (0,10,17) ) )
-
+		
 		self.exit = MovingPlane( self.space, pos = (0.0,25.0,1.0), dim = (1.0,1.0,1.0) )
 		self.exitid = self.exit.getId()
+		
+		self.hud.updateHUD("")
 	
 	def turnGravityTask(self):
 		''''''
@@ -134,9 +139,12 @@ class GameModel:
 		for coin in self.coins:
 			if body1 == coin.getBody() and body2 == self.ball.getBody():
 				coin.collect()
+				self.hud.updateHUD("")
 		
 		exit = self.exit.getGeom()
 		if geom1 == exit or geom2 == exit:
+			if Coin.collectable == GameModel.goal:
+			    self.app.restart()
 			self.app.nextLvl()
 			# TODO: send event Level Restart
 	

@@ -152,7 +152,9 @@ class GameModel:
 	
 	
 	def cleanUp(self):
-	    map( MovingPlane.removeNode, self.planes )
-	    map( Coin.removeNode, self.coins )
-	    self.ball.removeNode()
-	
+		map( MovingPlane.removeNode, self.planes )
+		map( Coin.removeNode, self.coins )
+		self.ball.removeNode()
+		self.kentta.removeLevel()
+		for plane in self.planes:
+			plane.removeNode()

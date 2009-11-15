@@ -30,3 +30,7 @@ class Level:
 		modelNode.setPos( pos )
 		modelNode.setScale( scale )
 		return modelNode
+	
+	def removeLevel (self):
+		self.collGeom = None
+		self.modelNode.removeNode()

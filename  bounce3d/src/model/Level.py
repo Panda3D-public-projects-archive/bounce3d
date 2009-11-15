@@ -4,8 +4,8 @@ from pandac.PandaModules import OdeTriMeshGeom
 
 class Level:
 	
-	MODEL_EGG_LIST=["../egg/level0_1_visual.egg", "../egg/level0_1_visual.egg" ]
-	COLLISION_EGG_LIST=["../egg/level0_1_collision.egg", "../egg/level0_1_collision.egg"]
+	MODEL_EGG_LIST=["../egg/level0_1_visual.egg", "../egg/level0_1_visual.egg", "../egg/level0_1_visual.egg" ]
+	COLLISION_EGG_LIST=["../egg/level0_1_collision.egg", "../egg/level0_1_collision.egg", "../egg/level0_1_collision.egg"]
 	POS_DEFAULT = ( 0,0,0 )
 	SCALE_DEFAULT = ( 1,1,1 )
 	

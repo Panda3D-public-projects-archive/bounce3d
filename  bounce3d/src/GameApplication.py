@@ -19,6 +19,7 @@ class GameApplication:
 		self.model = None
 		self.loop = None
 		self.keys = None
+		self.mapNo = 0
 		
 		self.restart()
 	
@@ -32,7 +33,7 @@ class GameApplication:
 		if ( self.model != None ):
 		    self.model.cleanUp()
 		    
-		self.model = GameModel( self )
+		self.model = GameModel( self, self.mapNo)
 		self.loop = GameLoop( self.model )
 		self.keys = GameControl( self.model, self )
 	    
@@ -40,7 +41,12 @@ class GameApplication:
 		    self.loop.simulationTask,
 		    "Physics Simulation")
 		#taskMgr.popupControls()
-		
+
+	def nextLvl(self):
+		self.mapNo = self.mapNo + 1
+		print self.mapNo
+		self.restart()
+
 if __name__ == "__main__":
 	game = GameApplication()
 	game.run()

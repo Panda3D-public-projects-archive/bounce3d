@@ -43,9 +43,14 @@ class GameApplication:
 		#taskMgr.popupControls()
 
 	def nextLvl(self):
-		self.mapNo = self.mapNo + 1
-		print self.mapNo
-		self.restart()
+		if (self.mapNo < 2):
+			self.mapNo = self.mapNo + 1
+			print "Loadin map no." 
+			print self.mapNo + 1
+			self.restart()
+		else:
+			print "Out of maps, restarting last level"
+			self.restart()
 
 if __name__ == "__main__":
 	game = GameApplication()

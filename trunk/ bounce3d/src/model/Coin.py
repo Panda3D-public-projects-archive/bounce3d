@@ -7,7 +7,10 @@ class Coin:
     An object that a ball collects.
     """
     
+    collectable = 0
+    
     def __init__(self, world, space, pos):
+	    Coin.collectable += 1
             self.world = world
             self.space = space
             self.addBox(pos)
@@ -18,6 +21,7 @@ class Coin:
             if not self.isCollected:
                     self.isCollected = True
                     self.box.setColor(1,0,0)
+		    Coin.collectable -= 1
             
     def addBox(self, pos):
             
@@ -54,5 +58,7 @@ class Coin:
             return self.boxBody
     
     def removeNode(self):
+	    if not self.isCollected:
+		Coin.collectable -= 1
 	    self.box.removeNode()
     

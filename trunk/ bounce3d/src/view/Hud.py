@@ -2,6 +2,8 @@
 from direct.gui.OnscreenText import OnscreenText
 from pandac.PandaModules import TextNode
 
+from model.Coin import Coin
+
 class Hud:
 	'''
 		a stylished text is placed on the screen.
@@ -19,6 +21,18 @@ class Hud:
 		)
 		self.helpText.show()
 		
+		self.helpText2 = OnscreenText(
+		    text="Collect ",
+		    style = 1,
+		    fg = (1,1,1,1),
+		    pos = ( -1.25, -0.85 ),
+		    align = TextNode.ALeft,
+		    scale = 0.07
+		)
+		self.helpText2.show()
+		
 	def updateHUD(self, append):
 		self.helpText.setText("Jump [SPACE], moving [ARROWS], turn gravity [g/h]" + append)
+		self.helpText2.setText("Collect: " + str(Coin.collectable) )
+	
 	

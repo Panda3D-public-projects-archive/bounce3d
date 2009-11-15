@@ -27,7 +27,6 @@ class GameApplication:
 		self.engine.run()
 		
 	def restart(self):
-		'''todo: restart the ball position '''
 		taskMgr.remove("Physics Simulation", )
 		
 		if ( self.model != None ):

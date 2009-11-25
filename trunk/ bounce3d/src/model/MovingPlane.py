@@ -8,7 +8,10 @@ class MovingPlane:
         id = 0
         
         def __init__(self, space, pos, dim):
-		''' Hauska Bugi: kirjoita 1.0 eika 1 '''
+                '''
+                kirjoita numerot float muodossa 1.0
+                @param space: fysiikka-avaruus?
+                '''
                 MovingPlane.id += 1
                 self.id = id
                 self.dim = dim # dimension
@@ -20,6 +23,7 @@ class MovingPlane:
 
                 self.model = loader.loadModel("box")
                 self.model.setScale( dim[0], dim[1], dim[2] )
+                # http://www.panda3d.org/wiki/index.php/Creating_a_New_Node_Class
                 self.model.flattenLight()
                 self.model.reparentTo(render)
 
@@ -35,13 +39,12 @@ class MovingPlane:
                 self.geom.setPosition( pos[0], pos[1], rot)
                 self.model.setPos(pos[0]-h[0], pos[1]-h[1], rot-h[2])
 
-	def getId(self):
-		return id;
-	
-	def getGeom(self):
-		return self.geom
-	
-	def removeNode(self):
-		self.model.removeNode()
-		self.geom = None
-	    
+        def getId(self):
+                return id;
+
+        def getGeom(self):
+                return self.geom
+
+        def removeNode(self):
+                self.model.removeNode()
+                self.geom = None

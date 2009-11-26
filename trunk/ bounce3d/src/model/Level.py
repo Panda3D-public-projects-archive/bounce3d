@@ -1,6 +1,7 @@
 from pandac.PandaModules import (OdeTriMeshData, OdeTriMeshGeom)
 from model.Coin import Coin
 from model.MovingPlane import MovingPlane
+from model.Ball import Ball
 
 class Level:
 	
@@ -17,14 +18,14 @@ class Level:
 	
 	def __init__(
 		self,
-		space,
-		world,
+		model,
 		mapNo,
 		pos = POS_DEFAULT,
 		scale = SCALE_DEFAULT,
 	):
-		self.space = space
-		self.world = world
+		self.model = model
+		self.space = model.space
+		self.world = model.world
 		self.pos = pos
 		self.scale = scale
 		
@@ -66,23 +67,40 @@ class Level:
 		self.coins = []
 		
 		if(mapNo == 0):
+			ball = self.model.getBall().setPosition( (0.0,-20.0,10.0) )
 			self.loadLevelEntity(mapNo)
 			self.exit = MovingPlane( self.space, (0.0,60.0,7.0), (1.0,1.0,1.0) )
 		elif(mapNo == 1):
+			ball = self.model.getBall().setPosition( (0.0,-20.0,10.0) )
+			ball = self.model.getBall()
+			ball.pos = (0.0,-20.0,10.0)
 			self.loadLevelEntity(mapNo)
 			self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) ) 
 		elif(mapNo == 2):
+			''' Testing Level '''
+			ball = self.model.getBall().setPosition( (0.0,-20.0,-10.0) )
+			
 			dim = (5.0,5.0,1.0)
-			self.planes.append( MovingPlane( self.space, (0.0,0.0,5.0),   dim ) )
-			self.planes.append( MovingPlane( self.space, (0.0,-5.0,10.0),  dim ) )
-			self.planes.append( MovingPlane( self.space, (0.0,-10.0,15.0), dim ) )
-			self.planes.append( MovingPlane( self.space, (0.0,-20.0,5.0),   dim ) )
+			plane = MovingPlane( self.space, (0.0,0.0,5.0),   dim )
+			plane.rotate = True
+			self.planes.append( plane )
+			
+			for x in xrange(1,5):
+				plane = MovingPlane( self.space, (0.0, -5.0*x, -5.0*x+5.0), dim )
+			
+			for x in xrange(-5,5):
+				plane = MovingPlane( self.space, (0.0, -5.0*x, -25.0), (5.0, 5.0, 1.0) )
+				
+			for x in xrange(-5,5):
+				plane = MovingPlane( self.space, (0.0, -5.0*x, 20.0), (5.0, 5.0, 1.0) )
 			
 			self.coins.append( Coin(self.world, self.space, pos = (0.0,-5.0,15.0) ) )
 			self.coins.append( Coin(self.world, self.space, pos = (0.0,-10.0,17.0) ) )
 			
+			# we will not update exit, it remains static
 			self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) )
 		else:
+			ball = self.model.getBall().setPosition( (0.0,-20.0,10.0) )
 			self.loadLevelEntity(mapNo)
 			self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) ) 
 			

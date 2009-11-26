@@ -36,9 +36,7 @@ class GameApplication:
 		self.loop = GameLoop( self.model )
 		self.keys = GameControl( self.model, self )
 	    
-		taskMgr.doMethodLater(0.1,
-		    self.loop.simulationTask,
-		    "Physics Simulation")
+		taskMgr.doMethodLater(0.01, self.loop.simulationTask, "Physics Simulation")
 		#taskMgr.popupControls()
 
 	def nextLvl(self):
@@ -54,5 +52,5 @@ class GameApplication:
 if __name__ == "__main__":
 	game = GameApplication()
 	game.run()
-			
+	
 	

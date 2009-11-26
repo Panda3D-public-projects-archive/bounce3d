@@ -27,16 +27,13 @@ class Level:
 		self.world = world
 		self.pos = pos
 		self.scale = scale
-		self.modelNode = self.createModelNode( self.pos, self.scale,
-			self.MODEL_EGG_LIST[mapNo] )
-		self.collNode = loader.loadModel( self.COLLISION_EGG_LIST[mapNo] )
-		self.trimesh = OdeTriMeshData( self.collNode, True )
-		self.collGeom = OdeTriMeshGeom( self.space, self.trimesh )
 		
-		self.modelNode.flattenStrong()
-		self.modelNode.reparentTo( render )
+		self.levelNode = None
+		self.exit = None # Every level should have an exit
 		
 		self.loadEntities(mapNo)
+		
+		self.goal = 0 # kerattavat kolikot
 	
 	def createModelNode( self, pos, scale, modelEgg ):
 		modelNode = loader.loadModel( modelEgg ) 
@@ -44,34 +41,51 @@ class Level:
 		modelNode.setScale( scale )
 		return modelNode
 	
-	def removeLevel (self):
+	def removeLevel(self):
 		self.collGeom = None
-		self.modelNode.removeNode()
-		self.unloadEntities()
-	
-	def unloadEntities( self ):
+		if ( self.levelNode != None ):
+			self.levelNode.removeNode()
+		
 		map( MovingPlane.removeNode, self.planes )
 		map( Coin.removeNode, self.coins )
-		self.exit.removeNode()
+		if ( self.exit != None ):
+			self.exit.removeNode()
 	
+	def loadLevelEntity( self, mapNo):
+		self.levelNode = self.createModelNode( self.pos, self.scale,
+			self.MODEL_EGG_LIST[mapNo] )
+		self.collNode = loader.loadModel( self.COLLISION_EGG_LIST[mapNo] )
+		self.trimesh = OdeTriMeshData( self.collNode, True )
+		self.collGeom = OdeTriMeshGeom( self.space, self.trimesh )
+		
+		self.levelNode.flattenStrong()
+		self.levelNode.reparentTo( render )
+		
 	def loadEntities( self, mapNo ):
 		self.planes = []
 		self.coins = []
 		
 		if(mapNo == 0):
-			self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) )
-			
+			self.loadLevelEntity(mapNo)
+			self.exit = MovingPlane( self.space, (0.0,60.0,7.0), (1.0,1.0,1.0) )
+		elif(mapNo == 1):
+			self.loadLevelEntity(mapNo)
+			self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) ) 
+		elif(mapNo == 2):
 			dim = (5.0,5.0,1.0)
 			self.planes.append( MovingPlane( self.space, (0.0,0.0,5.0),   dim ) )
-			self.planes.append( MovingPlane( self.space, (0.0,5.0,10.0),  dim ) )
-			self.planes.append( MovingPlane( self.space, (0.0,10.0,15.0), dim ) )
-
-			self.coins.append( Coin(self.world, self.space, pos = (0,5,15) ) )
-			self.coins.append( Coin(self.world, self.space, pos = (0,10,17) ) )
-		elif(mapNo == 1):
-			self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) ) 
+			self.planes.append( MovingPlane( self.space, (0.0,-5.0,10.0),  dim ) )
+			self.planes.append( MovingPlane( self.space, (0.0,-10.0,15.0), dim ) )
+			self.planes.append( MovingPlane( self.space, (0.0,-20.0,5.0),   dim ) )
+			
+			self.coins.append( Coin(self.world, self.space, pos = (0.0,-5.0,15.0) ) )
+			self.coins.append( Coin(self.world, self.space, pos = (0.0,-10.0,17.0) ) )
+			
+			self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) )
 		else:
+			self.loadLevelEntity(mapNo)
 			self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) ) 
+			
 		
 	def updateModelNode(self):
 		map( Coin.updateModelNode, self.coins)
@@ -80,4 +94,7 @@ class Level:
 	def getExit(self):
 		''' Return the geometry of an exit'''
 		return self.exit.getGeom()
+	
+	def getGoal(self):
+		return self.goal
 	

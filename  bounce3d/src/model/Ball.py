@@ -345,7 +345,10 @@ class Ball:
 	
 	def getPosition( self ):
 		return self.ballBody.getPosition()
-		
+	
+	def setPosition( self, pos):
+		self.ballBody.setPosition( pos )
+	
 	def getBody( self ):
 		return self.ballBody
 

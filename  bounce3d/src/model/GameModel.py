@@ -58,12 +58,11 @@ class GameModel:
 		
 		engine.accept("ode-collision", self.onCollision)
 		
-		self.ball = Ball(self.hud, self.world, self.space,
-		    "Johanneksen pallo", pos=(0.0,-20.0,10.0))
+		self.ball = Ball(self.hud, self.world, self.space, "Johanneksen pallo")
 		#ballBody = self.ball.getBody()
 		#ballJoint = OdePlane2dJoint(self.world)
 		#ballJoint.attachBody(ballBody, 1)
-		self.level = Level(self.space, self.world, mapNo)
+		self.level = Level(self, mapNo)
 		self.player = Player("Johannes")
 		
 		self.hud.updateHUD("")

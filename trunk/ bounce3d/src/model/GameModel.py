@@ -29,9 +29,6 @@ from event.EventType import EventType
 class GameModel:
 	#Represents the world data.
 	
-	# Kerattavat kolikot.
-	goal = 0
-	
 	def __init__(self, app, mapNo):
 		self.app = app
 		engine = app.engine
@@ -85,7 +82,10 @@ class GameModel:
 		self.world.setGravity( g2 )
 	
 	def updateObjects(self):
-		''' Update objects after one physics iteration '''
+		'''
+		Update objects after one physics iteration
+		@see GameLoop.simulationTask
+		'''
 		self.ball.updateModelNode()
 		self.level.updateModelNode()
 		self.updateCamera( self.ball )
@@ -119,7 +119,7 @@ class GameModel:
 		
 		exit = self.level.getExit()
 		if geom1 == exit or geom2 == exit:
-			if Coin.collectable == GameModel.goal:
+			if Coin.collectable == self.level.getGoal():
 				# todo: make event based
 				self.app.nextLvl() 
 	

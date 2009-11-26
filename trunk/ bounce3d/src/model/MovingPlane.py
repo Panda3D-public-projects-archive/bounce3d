@@ -21,7 +21,7 @@ class MovingPlane:
 
 		self.geom = OdeBoxGeom( space, dim[0], dim[1], dim[2])
 
-		self.model = loader.loadModel("box")
+		self.model = loader.loadModel("box.egg")
 		self.model.setScale( dim[0], dim[1], dim[2] )
 		# http://www.panda3d.org/wiki/index.php/Creating_a_New_Node_Class
 		self.model.flattenLight()

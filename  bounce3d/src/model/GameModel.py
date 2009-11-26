@@ -29,12 +29,10 @@ from event.EventType import EventType
 class GameModel:
 	#Represents the world data.
 	
-	def __init__(self, app, mapNo):
-		self.app = app
-		engine = app.engine
-		self.camera = engine.camera
+	def __init__(self, base, mapNo):
 		
-		self.hud = app.hud
+		self.camera = base.camera
+		
 		self.isListening = False
 		
 		# Holds rigid bodies, joints, controls global params
@@ -56,16 +54,14 @@ class GameModel:
 		
 		self.space.setCollisionEvent("ode-collision")
 		
-		engine.accept("ode-collision", self.onCollision)
+		base.accept("ode-collision", self.onCollision)
 		
-		self.ball = Ball(self.hud, self.world, self.space, "Johanneksen pallo")
+		self.ball = Ball(self.world, self.space, "Johanneksen pallo")
 		#ballBody = self.ball.getBody()
 		#ballJoint = OdePlane2dJoint(self.world)
 		#ballJoint.attachBody(ballBody, 1)
 		self.level = Level(self, mapNo)
 		self.player = Player("Johannes")
-		
-		self.hud.updateHUD("")
 	
 	def turnGravityTask(self):
 		''''''
@@ -114,14 +110,15 @@ class GameModel:
 		for coin in self.level.coins:
 			if body1 == coin.getBody() and body2 == self.ball.getBody():
 				coin.collect()
-				self.hud.updateHUD("")
+				messenger.send('updateHUD')
 		
 		exit = self.level.getExit()
 		if geom1 == exit or geom2 == exit:
 			if Coin.collectable == self.level.getGoal():
 				# todo: make event based
-				self.app.nextLvl() 
+				messenger.send('nextLevel')
 	
 	def cleanUp(self):
 		self.level.removeLevel()
 		self.ball.removeNode()
+	

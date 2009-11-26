@@ -8,22 +8,27 @@ class Hud:
 	'''
 		a stylished text is placed on the screen.
 	'''
-	def __init__(self):
+	DEFAULT = "Jump [SPACE], moving [ARROWS], turn gravity [g/h], degub mode [d]"
+	COINS_TEXT = "Collect coins:"
+	DEFAULT_APPEND = ""
 	
+	def __init__(self, basetext = DEFAULT):
+		self.basetext = basetext
+		
 		# Add a text on the screen.
-		self.helpText = OnscreenText(
-			text = "Jump [SPACE], moving [ARROWS], turn gravity [g/h]",
+		self.helpText1 = OnscreenText(
+			text = self.basetext,
 			style = 1,
 			fg = (1,1,1,1),
 			pos = (-1.25,0.85),
 			align = TextNode.ALeft,
 			scale = 0.07
 		)
-		self.helpText.show()
+		self.helpText1.show()
 		
 		self.helpText2 = OnscreenText(
-		    text="Collect ",
-		    style = 1,
+		    text = Hud.COINS_TEXT,
+		    style = 2,
 		    fg = (1,1,1,1),
 		    pos = ( -1.25, -0.85 ),
 		    align = TextNode.ALeft,
@@ -31,8 +36,10 @@ class Hud:
 		)
 		self.helpText2.show()
 		
-	def updateHUD(self, append):
-		self.helpText.setText("Jump [SPACE], moving [ARROWS], turn gravity [g/h]" + append)
-		self.helpText2.setText("Collect: " + str(Coin.collectable) )
-	
+		self.updateHUD()
+		
+	def updateHUD(self, append=DEFAULT_APPEND):
+		self.helpText1.setText(self.basetext + append)
+		self.helpText2.setText(Hud.COINS_TEXT + " " + str(Coin.collectable) )
+		
 	

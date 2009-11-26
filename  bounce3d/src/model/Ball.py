@@ -32,21 +32,19 @@ class Ball:
 	COLLISION_THRESHOLD_TIME = 0.33
 
 	def __init__(
-	self,
-	hud,
-	world,
-	space,
-	name = NAME_DEFAULT, 
-	modelEgg = MODEL_EGG_DEFAULT,
-	pos = POS_DEFAULT, 
-	scale = SCALE_DEFAULT, 
-	hpr = HPR_DEFAULT,
+		self,
+		world,
+		space,
+		name = NAME_DEFAULT, 
+		modelEgg = MODEL_EGG_DEFAULT,
+		pos = POS_DEFAULT, 
+		scale = SCALE_DEFAULT, 
+		hpr = HPR_DEFAULT,
 	):
 		self.name = name
 		self.pos = pos
 		self.hpr = hpr
 		self.scale = scale
-		self.hud = hud
 		self.world = world
 		self.space = space
 		self.jumping = False
@@ -186,7 +184,7 @@ class Ball:
 				# Draw debug info
 				if self.lastTakeoffTime == 0.0:
 					self.lastTakeoffTime = now
-					self.hud.updateHUD(", Ball state: AIR")
+					messenger.send('updateHUD', [", Ball state: AIR"])
 			return False
 	
 	def isGroundCollision( self, bodyPos, colPos ):
@@ -258,9 +256,9 @@ class Ball:
 			if previous != self.lastCollisionIsGround or self.lastTakeoffTime != 0.0:
 				self.lastTakeoffTime = 0.0
 				if self.lastCollisionIsGround:
-					self.hud.updateHUD(", Ball state: GROUND")
+					messenger.send('updateHUD', [", Ball state: GROUND"])
 				else:
-					self.hud.updateHUD(", Ball state: ???")
+					messenger.send('updateHUD', [", Ball state: ???"])
 					
 	def updateModelNode(self):
 		''' Update objects after one physics iteration '''		

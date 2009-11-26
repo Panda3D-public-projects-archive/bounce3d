@@ -70,12 +70,14 @@ class Level:
 			ball = self.model.getBall().setPosition( (0.0,-20.0,10.0) )
 			self.loadLevelEntity(mapNo)
 			self.exit = MovingPlane( self.space, (0.0,60.0,7.0), (1.0,1.0,1.0) )
+			
 		elif(mapNo == 1):
 			ball = self.model.getBall().setPosition( (0.0,-20.0,10.0) )
 			ball = self.model.getBall()
 			ball.pos = (0.0,-20.0,10.0)
 			self.loadLevelEntity(mapNo)
 			self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) ) 
+			
 		elif(mapNo == 2):
 			''' Testing Level '''
 			ball = self.model.getBall().setPosition( (0.0,-20.0,-10.0) )
@@ -99,6 +101,7 @@ class Level:
 			
 			# we will not update exit, it remains static
 			self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) )
+			
 		else:
 			ball = self.model.getBall().setPosition( (0.0,-20.0,10.0) )
 			self.loadLevelEntity(mapNo)

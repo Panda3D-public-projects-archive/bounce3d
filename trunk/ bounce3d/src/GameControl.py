@@ -56,6 +56,7 @@ class GameControl(DirectObject):
 		self.accept(GameControl.PLAYER_RIGHT_KEY + "-up", ball.arrowRightUp)
 		self.accept(GameControl.PLAYER_LEFT_KEY, ball.arrowLeftDown)
 		self.accept(GameControl.PLAYER_LEFT_KEY + "-up", ball.arrowLeftUp)
+		
 		self.accept(GameControl.PLAYER_UP_KEY, ball.arrowUpDown)
 		self.accept(GameControl.PLAYER_UP_KEY + "-up", ball.arrowUpUp)
 		self.accept(GameControl.PLAYER_DOWN_KEY, ball.arrowDownDown)
@@ -67,6 +68,5 @@ class GameControl(DirectObject):
 		self.accept(GameControl.TURN_GRAVITY, model.turnGravityTask )
 		self.accept(GameControl.TURN_GRAVITY2, model.turnGravityTask2 )
 		
-		self.accept(GameControl.RESTART_LEVEL, app.restart )
-		
 		model.isListening = True
+		

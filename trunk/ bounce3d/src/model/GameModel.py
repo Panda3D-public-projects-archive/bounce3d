@@ -23,21 +23,21 @@ from model.Level import Level
 from model.Player import Player
 from model.Coin import Coin
 from model.MovingPlane import MovingPlane
+from model.Camera import Camera
+
 from event.Event import createNamedEvent
 from event.EventType import EventType
-		
+
+
+
 class GameModel:
 	#Represents the world data.
 	
 	def __init__(self, base, mapNo):
-		
-		self.camera = base.camera
-		
 		self.isListening = False
 		
 		# Holds rigid bodies, joints, controls global params
 		self.world = OdeWorld()
-		
 		self.world.setGravity(0,0,-9.8)
 		
 		self.world.initSurfaceTable(num_surfaces = 1)
@@ -45,29 +45,26 @@ class GameModel:
 		# http://www.panda3d.org/wiki/index.php/Collision_Detection_with_ODE
 		# (surfaceId1, surfaceId2, mu, bounce, bounce_vel, soft_erp, soft_cfm, slip, dampen)
 		self.world.setSurfaceEntry(0, 0, 0.8, 0.0, 9.1, 0.9, 0.00001, 100.0, 0.002)
-		
 		self.contactgroup = OdeJointGroup()
 		
 		self.space = OdeHashSpace()
 		self.space.setAutoCollideWorld(self.world)
 		self.space.setAutoCollideJointGroup( self.contactgroup )
-		
 		self.space.setCollisionEvent("ode-collision")
-		
 		base.accept("ode-collision", self.onCollision)
 		
 		self.ball = Ball(self.world, self.space, "Johanneksen pallo")
-		#ballBody = self.ball.getBody()
-		#ballJoint = OdePlane2dJoint(self.world)
-		#ballJoint.attachBody(ballBody, 1)
-		self.level = Level(self, mapNo)
+		self.level = Level(self, mapNo)	
 		self.player = Player("Johannes")
+		
+		self.camera = Camera(base, self.ball)
 	
 	def turnGravityTask(self):
 		''''''
 		g = self.world.getGravity()
 		g = -g
 		self.world.setGravity( g )
+		self.camera.turn()
 	
 	def turnGravityTask2(self):
 		''''''
@@ -83,20 +80,15 @@ class GameModel:
 		'''
 		self.ball.updateModelNode()
 		self.level.updateModelNode()
-		self.updateCamera( self.ball )
-	
-	def updateCamera(self, ball):
-		x,y,z = ball.getPosition()
-		self.camera.lookAt( x,y,z+1 )
-		cx,cy,cz = self.camera.getPos()
-		self.camera.setPos( cx, y, cz ) # alter only y-axis
-	
+		self.camera.updateModelNode()
+		
 	def getBall(self):
 		return self.ball
 	
 	def getPlayer(self):
 		return self.player
 	
+	# http://www.panda3d.org/wiki/index.php/Collision_Detection_with_ODE
 	def onCollision(self, entry):
 		geom1 = entry.getGeom1()
 		geom2 = entry.getGeom2()
@@ -110,15 +102,16 @@ class GameModel:
 		for coin in self.level.coins:
 			if body1 == coin.getBody() and body2 == self.ball.getBody():
 				coin.collect()
-				messenger.send('updateHUD')
+				messenger.send(EventType.UPDATE_HUD)
 		
 		exit = self.level.getExit()
 		if geom1 == exit or geom2 == exit:
 			if Coin.collectable == self.level.getGoal():
 				# todo: make event based
-				messenger.send('nextLevel')
+				messenger.send(EventType.NEXT_LEVEL)
+				
 	
 	def cleanUp(self):
 		self.level.removeLevel()
 		self.ball.removeNode()
-	
+		

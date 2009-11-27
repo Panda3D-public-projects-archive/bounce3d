@@ -14,6 +14,8 @@ from event.EventType import EventType
 
 class GameApplication:
 	
+	SIM_TASK = "Physics Simulation"
+	
 	def __init__(self):
 		self.base = ShowBase()
 		self.model = self.loop = self.keys = None
@@ -43,16 +45,18 @@ class GameApplication:
 		self.base.run()
 		
 	def _restart(self):
-		taskMgr.remove("Physics Simulation")
+		taskMgr.remove( self.SIM_TASK )
 		
 		if ( self.model != None ): self.model.cleanUp()
 		    
 		self.model = GameModel( self.base, self.mapNo)
 		self.loop = GameLoop( self.model )
 		self.keys = GameControl( self.model, self )
+		
+		messenger.send(EventType.UPDATE_HUD)
 	    
 		# http://www.panda3d.org/wiki/index.php/Tasks
-		taskMgr.doMethodLater(0.01, self.loop.simulationTask, "Physics Simulation")
+		taskMgr.doMethodLater(0.01, self.loop.simulationTask, self.SIM_TASK)
 
 	def _nextLevel(self):
 		if (self.mapNo < 2):

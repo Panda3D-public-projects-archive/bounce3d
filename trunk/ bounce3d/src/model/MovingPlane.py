@@ -7,6 +7,8 @@ class MovingPlane:
 	''' moving plane '''
 	id = 0
 
+	MODEL = "../egg/box.egg"
+	
 	def __init__(self, space, pos, dim):
 		'''
 		kirjoita numerot float muodossa 1.0
@@ -21,7 +23,7 @@ class MovingPlane:
 
 		self.geom = OdeBoxGeom( space, dim[0], dim[1], dim[2])
 
-		self.model = loader.loadModel("box.egg")
+		self.model = loader.loadModel(self.MODEL)
 		self.model.setScale( dim[0], dim[1], dim[2] )
 		# http://www.panda3d.org/wiki/index.php/Creating_a_New_Node_Class
 		self.model.flattenLight()

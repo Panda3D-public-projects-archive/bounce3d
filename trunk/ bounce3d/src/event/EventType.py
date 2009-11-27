@@ -10,3 +10,5 @@ class EventType:
 	RESTART    = 0x123123
 	NEXT_LEVEL = 0x453453
 	UPDATE_HUD = 0xa34434
+	
+	ODE_COLLISION = "ode-collision"

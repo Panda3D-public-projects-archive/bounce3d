@@ -10,29 +10,31 @@ from model.GameModel import GameModel
 from view.Hud import Hud
 from view.GameView import GameView
 
+from event.EventType import EventType
+
 class GameApplication:
 	
 	def __init__(self):
 		self.base = ShowBase()
-		self.model = None
-		self.loop = None
-		self.keys = None
-		self.mapNo = 0
+		self.model = self.loop = self.keys = None
+		self.mapNo = 0 #default
 		self.hud = Hud()
 		self.view = GameView( self.base )
 		
-		# CULLING!
-		self.base.accept('d', self.toggleDebug )
-		
-		# create hud event listener
 		# http://www.panda3d.org/wiki/index.php/Event_Handlers
-		self.base.accept('updateHUD', self.hud.updateHUD)
-		self.base.accept('nextLevel', self.nextLvl)
-		self.base.accept('restart', self.restart)
+		self.base.accept(EventType.UPDATE_HUD, self.hud.updateHUD) # hud event listener
 		
-		self.restart()
+		self.base.accept(EventType.NEXT_LEVEL, self._nextLevel)
+		self.base.accept('n', self._nextLevel)
+		
+		self.base.accept(EventType.RESTART, self._restart)
+		self.base.accept('r', self._restart)
+		
+		self.base.accept('d', self._toggleDebug )
+		
+		messenger.send(EventType.RESTART)
 	
-	def toggleDebug(self):
+	def _toggleDebug(self):
 		# http://www.panda3d.org/wiki/index.php/The_Default_Camera_Driver
 		#self.base.oobe()
 		self.base.oobeCull()
@@ -40,11 +42,10 @@ class GameApplication:
 	def run(self):
 		self.base.run()
 		
-	def restart(self):
-		taskMgr.remove("Physics Simulation", )
+	def _restart(self):
+		taskMgr.remove("Physics Simulation")
 		
-		if ( self.model != None ):
-		    self.model.cleanUp()
+		if ( self.model != None ): self.model.cleanUp()
 		    
 		self.model = GameModel( self.base, self.mapNo)
 		self.loop = GameLoop( self.model )
@@ -53,15 +54,14 @@ class GameApplication:
 		# http://www.panda3d.org/wiki/index.php/Tasks
 		taskMgr.doMethodLater(0.01, self.loop.simulationTask, "Physics Simulation")
 
-	def nextLvl(self):
+	def _nextLevel(self):
 		if (self.mapNo < 2):
 			self.mapNo = self.mapNo + 1
-			print "Loading map no. ", self.mapNo 
-			print self.mapNo + 1
-			self.restart()
+			messenger.send(EventType.RESTART)
 		else:
-			print "Out of maps, restarting last level"
-			self.restart()
+			self.mapNo = 0
+			messenger.send(EventType.RESTART)
+			
 
 if __name__ == "__main__":
 	game = GameApplication()

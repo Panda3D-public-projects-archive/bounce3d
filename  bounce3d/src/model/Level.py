@@ -79,16 +79,30 @@ class Level:
 			self.coins.append( Coin(self.world, self.space, pos = (0.0,-5.0,15.0) ) )
 			self.coins.append( Coin(self.world, self.space, pos = (0.0,-10.0,17.0) ) )
 			
-			
+			# http://www.panda3d.org/apiref.php?page=NodePath
 			
 			# we will not update exit, it remains static
 			self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) )
+			
+			self.trigger = loader.loadModel("box")
+			self.trigger.reparentTo( render )
+			self.trigger.setPos( 0.0, -10.0, -20.0 )
+			
+			self.door = loader.loadModel("box")
+			self.door.reparentTo( self.trigger )
+			self.door.setPos( 0.0, -5, 0 )
+			
+			#base.accept('open_door', self.triggerEvent )
+			#messenger.send('open_door')
 			
 		else:
 			ball = self.model.getBall().setPosition( (0.0,-20.0,10.0) )
 			self.loadLevelEntity(mapNo)
 			self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) ) 
-			
+	
+	def triggerEvent( self ):
+		self.door.setColor(1,0,0)
+		
 	def loadLevelEntity( self, mapNo):
 		self.levelNode = self._createModelNode( self.pos, self.scale,
 			self.MODEL_EGG_LIST[mapNo] )
@@ -119,7 +133,7 @@ class Level:
 		map( Coin.removeNode, self.coins )
 		
 		if ( self.exit != None ):
-			self.exit.removeNode()		
+			self.exit.removeNode()
 	
 	def getExit(self):
 		''' Return the geometry of an exit'''
@@ -127,4 +141,3 @@ class Level:
 	
 	def getGoal(self):
 		return self.goal
-	

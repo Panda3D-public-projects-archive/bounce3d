@@ -50,10 +50,11 @@ class GameModel:
 		self.space = OdeHashSpace()
 		self.space.setAutoCollideWorld(self.world)
 		self.space.setAutoCollideJointGroup( self.contactgroup )
-		self.space.setCollisionEvent("ode-collision")
-		base.accept("ode-collision", self.onCollision)
+		self.space.setCollisionEvent(EventType.ODE_COLLISION)
+		base.accept(EventType.ODE_COLLISION, self.onCollision)
 		
 		self.ball = Ball(self.world, self.space, "Johanneksen pallo")
+		
 		self.level = Level(self, mapNo)	
 		self.player = Player("Johannes")
 		
@@ -109,7 +110,8 @@ class GameModel:
 			if Coin.collectable == self.level.getGoal():
 				# todo: make event based
 				messenger.send(EventType.NEXT_LEVEL)
-				
+		
+		
 	
 	def cleanUp(self):
 		self.level.removeLevel()

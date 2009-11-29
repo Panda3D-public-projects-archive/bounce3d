@@ -3,6 +3,7 @@
 from direct.showbase.DirectObject import DirectObject
 
 from model.GameModel import GameModel
+
 from event.Event import createNamedEvent
 from event.EventType import EventType
 
@@ -21,10 +22,13 @@ class GameControl(DirectObject):
 	TURN_GRAVITY = "g"
 	TURN_GRAVITY2 = "h"
 	RESTART_LEVEL = "r"
+	SELECT = "enter"
 
-	def __init__(self, model, app):
+	def __init__(self, model, menu, app):
 		player = model.getPlayer()
-		ball = model.getBall()
+		self.ball = ball = model.getBall()
+		self.menu = menu
+		self.inMenu = False
 		
 		playerMoveRightOn = createNamedEvent(
 			player.name, EventType.PLAYER_MOVE_RIGHT_ON
@@ -57,6 +61,8 @@ class GameControl(DirectObject):
 		self.accept(GameControl.PLAYER_LEFT_KEY, ball.arrowLeftDown)
 		self.accept(GameControl.PLAYER_LEFT_KEY + "-up", ball.arrowLeftUp)
 		
+		self.accept(EventType.CONTROL_CHANGE, self.controlLocation)
+		
 		self.accept(GameControl.PLAYER_UP_KEY, ball.arrowUpDown)
 		self.accept(GameControl.PLAYER_UP_KEY + "-up", ball.arrowUpUp)
 		self.accept(GameControl.PLAYER_DOWN_KEY, ball.arrowDownDown)
@@ -69,4 +75,16 @@ class GameControl(DirectObject):
 		self.accept(GameControl.TURN_GRAVITY2, model.turnGravityTask2 )
 		
 		model.isListening = True
-		
+	
+	def controlChange(self):
+		if self.inMenu:
+			self.accept(GameControl.PLAYER_UP_KEY + "-up", self.menu.selectionUp)
+			self.accept(GameControl.PLAYER_DOWN_KEY + "-up", self.menu.selectionDown)
+			self.accept(GameControl.SELECT + "-up", self.menu.select)
+		else:
+			self.accept(GameControl.PLAYER_UP_KEY + "-up", self.ball.arrowUpUp)
+			self.accept(GameControl.PLAYER_DOWN_KEY + "-up", self.ball.arrowDownUp)
+	
+	def controlLocation(self):
+		self.inMenu = not self.inMenu
+		self.controlChange()

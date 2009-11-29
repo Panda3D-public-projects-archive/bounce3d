@@ -1,5 +1,6 @@
 from direct.gui.DirectGui import OnscreenText
 # from direct.gui.DirectGui import OnscreenImage
+
 from pandac.PandaModules import TextNode
 
 from model.GameModel import GameModel
@@ -22,6 +23,7 @@ class Menu:
 		self.menu_text = menu_text
 		self.menu_items = []
 		self.selection = default
+		
 		
 		# Generates a menu.
 		for i in self.menu_text:
@@ -54,9 +56,12 @@ class Menu:
 			print "Menu bottom reached"
 
 	def select(self):
+		'''
 		for i in self.OPTIONS:
 			if self.selection == self.OPTIONS.index(i):
 				messenger.send(EventType.self.OPTION_EVENTS[self.OPTIONS.index(i)]) # Work in progress
+		'''
+		print "Selection made"
 		self.hideMenu()
 
 	def showMenu(self):

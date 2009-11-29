@@ -12,5 +12,6 @@ class EventType:
 	UPDATE_HUD = 0xa34434
 	MENU = 0x0000ff
 	CONTROL_CHANGE = 0x00ff00
+	CONTROL_HIDE = 0xff0000
 	
 	ODE_COLLISION = "ode-collision"

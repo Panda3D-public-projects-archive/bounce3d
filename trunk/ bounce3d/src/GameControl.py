@@ -84,7 +84,12 @@ class GameControl(DirectObject):
 		else:
 			self.accept(GameControl.PLAYER_UP_KEY + "-up", self.ball.arrowUpUp)
 			self.accept(GameControl.PLAYER_DOWN_KEY + "-up", self.ball.arrowDownUp)
+			self.accept(GameControl.SELECT + "-up",self.unbind )
 	
 	def controlLocation(self):
 		self.inMenu = not self.inMenu
 		self.controlChange()
+	
+	def unbind(self):
+		self.menu.hideMenu()
+		print "Key unbinded"

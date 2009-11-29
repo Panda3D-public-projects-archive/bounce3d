@@ -10,6 +10,8 @@ from direct.directtools.DirectGeometry import LineNodePath
 
 # from direct.directbase.DirectStart import *
 
+from model.SurfaceType import SurfaceType
+
 class Ball:
 	
 	NAME_DEFAULT = "UNNAMED"
@@ -90,6 +92,7 @@ class Ball:
 		ballGeom.setCollideBits( BitMask32( 0x2 ) )
 		ballGeom.setCategoryBits( BitMask32( 0x1 ) )
 		ballGeom.setBody( ballBody )
+		space.setSurfaceType( ballGeom, SurfaceType.BALL )
 		return ballGeom
 	
 	def getDefaultGravityVec3( self ):

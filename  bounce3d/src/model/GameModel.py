@@ -28,7 +28,7 @@ from model.Camera import Camera
 from event.Event import createNamedEvent
 from event.EventType import EventType
 
-
+from model.SurfaceType import SurfaceType
 
 class GameModel:
 	#Represents the world data.
@@ -40,11 +40,10 @@ class GameModel:
 		self.world = OdeWorld()
 		self.world.setGravity(0,0,-9.8)
 		
-		self.world.initSurfaceTable(num_surfaces = 1)
-		# http://www.panda3d.org/apiref.php?page=OdeWorld#setSurfaceEntry
-		# http://www.panda3d.org/wiki/index.php/Collision_Detection_with_ODE
-		# (surfaceId1, surfaceId2, mu, bounce, bounce_vel, soft_erp, soft_cfm, slip, dampen)
-		self.world.setSurfaceEntry(0, 0, 0.8, 0.0, 9.1, 0.9, 0.00001, 100.0, 0.002)
+		st = SurfaceType()
+		st.load( self.world )
+		del st
+		
 		self.contactgroup = OdeJointGroup()
 		
 		self.space = OdeHashSpace()

@@ -8,6 +8,7 @@ from GameLoop import GameLoop
 
 from model.GameModel import GameModel
 from view.Hud import Hud
+from view.Menu import Menu
 from view.GameView import GameView
 
 from event.EventType import EventType
@@ -21,10 +22,14 @@ class GameApplication:
 		self.model = self.loop = self.keys = None
 		self.mapNo = 0 #default
 		self.hud = Hud()
+		self.menu = Menu()
 		self.view = GameView( self.base )
 		
 		# http://www.panda3d.org/wiki/index.php/Event_Handlers
 		self.base.accept(EventType.UPDATE_HUD, self.hud.updateHUD) # hud event listener
+		
+		self.base.accept(EventType.MENU, self.menu.showMenu) # Menu event listener
+		self.base.accept('m', self.menu.showMenu)
 		
 		self.base.accept(EventType.NEXT_LEVEL, self._nextLevel)
 		self.base.accept('n', self._nextLevel)
@@ -51,7 +56,7 @@ class GameApplication:
 		    
 		self.model = GameModel( self.base, self.mapNo)
 		self.loop = GameLoop( self.model )
-		self.keys = GameControl( self.model, self )
+		self.keys = GameControl( self.model, self.menu, self )
 		
 		messenger.send(EventType.UPDATE_HUD)
 	    

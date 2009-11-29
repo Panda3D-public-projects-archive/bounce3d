@@ -3,13 +3,15 @@ from pandac.PandaModules import (
         Quat,OdeBody, OdeMass, OdeBoxGeom, BitMask32)
 from math import sin
 
+from model.SurfaceType import SurfaceType
+
 class MovingPlane:
 	''' moving plane '''
 	id = 0
 
 	MODEL = "../egg/box.egg"
 	
-	def __init__(self, space, pos, dim):
+	def __init__(self, space, pos, dim, surface = SurfaceType.FLOOR):
 		'''
 		kirjoita numerot float muodossa 1.0
 		@param space: fysiikka-avaruus?
@@ -22,7 +24,8 @@ class MovingPlane:
 		self.t = 0
 
 		self.geom = OdeBoxGeom( space, dim[0], dim[1], dim[2])
-
+		space.setSurfaceType( self.geom, surface )
+		
 		self.model = loader.loadModel(self.MODEL)
 		self.model.setScale( dim[0], dim[1], dim[2] )
 		# http://www.panda3d.org/wiki/index.php/Creating_a_New_Node_Class

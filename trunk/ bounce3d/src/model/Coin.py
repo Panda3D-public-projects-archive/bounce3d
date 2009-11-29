@@ -1,7 +1,9 @@
 
 from pandac.PandaModules import (
 	Quat,OdeBody, OdeMass, OdeBoxGeom, BitMask32)
-	
+
+from model.SurfaceType import SurfaceType
+
 class Coin:
 	"""
 	An object that a ball collects.
@@ -46,6 +48,7 @@ class Coin:
 		self.boxBody.setMass( mass )
 		
 		self.geom = OdeBoxGeom( self.space, lx, ly, lz)
+		self.space.setSurfaceType( self.geom, SurfaceType.COIN )
 		self.geom.setBody( self.boxBody )
 	
 	def updateModelNode(self):

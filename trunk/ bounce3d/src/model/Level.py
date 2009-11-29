@@ -3,6 +3,8 @@ from model.Coin import Coin
 from model.MovingPlane import MovingPlane
 from model.Ball import Ball
 
+from model.SurfaceType import SurfaceType
+
 class Level:
 	
 	MODEL_EGG_LIST=[
@@ -64,14 +66,17 @@ class Level:
 			plane.rotate = True
 			self.planes.append( plane )
 			
+			
 			for x in xrange(1,5):
 				plane = MovingPlane( self.space, (0.0, -5.0*x, -5.0*x+5.0), dim )
 				self.planes.append( plane )
 			
+			# Floor
 			for x in xrange(-5,5):
-				plane = MovingPlane( self.space, (0.0, -5.0*x, -25.0), (5.0, 5.0, 1.0) )
+				plane = MovingPlane( self.space, (0.0, -5.0*x, -25.0), (5.0, 5.0, 1.0), SurfaceType.SAND )
 				self.planes.append( plane )
-				
+			
+			# Ceiling
 			for x in xrange(-5,5):
 				plane = MovingPlane( self.space, (0.0, -5.0*x, 20.0), (5.0, 5.0, 1.0) )
 				self.planes.append( plane )
@@ -109,7 +114,7 @@ class Level:
 		self.collNode = loader.loadModel( self.COLLISION_EGG_LIST[mapNo] )
 		self.trimesh = OdeTriMeshData( self.collNode, True )
 		self.collGeom = OdeTriMeshGeom( self.space, self.trimesh )
-		
+		self.space.setSurfaceType( self.collGeom, SurfaceType.FLOOR )
 		self.levelNode.flattenStrong()
 		self.levelNode.reparentTo( render )
 

@@ -13,23 +13,40 @@ from view.GameView import GameView
 
 from event.EventType import EventType
 
+import sys
+
 class GameApplication:
 	
 	SIM_TASK = "Physics Simulation"
 	
 	def __init__(self):
+	
 		self.base = ShowBase()
 		self.model = self.loop = self.keys = None
 		self.mapNo = 0 #default
 		self.hud = Hud()
-		self.menu = Menu()
 		self.view = GameView( self.base )
 		
+		# Menues
+		self.menu = Menu(
+			self.base,
+			["Main Menu"],
+			[ "Continue", "Restart", "Highscore", "Exit"],
+			[EventType.MENU, EventType.RESTART, EventType.MENU_HS, EventType.EXIT],
+		)
+		self.hs = Menu(
+			self.base,
+			["Highscores", "***", "Test1 9:59:99", "Test2 9:59:99", "Test3 9:59:99"],
+			["Back"],
+			[EventType.MENU]
+		)
 		# http://www.panda3d.org/wiki/index.php/Event_Handlers
 		self.base.accept(EventType.UPDATE_HUD, self.hud.updateHUD) # hud event listener
 		
 		self.base.accept(EventType.MENU, self.menu.showMenu) # Menu event listener
 		self.base.accept('m', self.menu.showMenu)
+		
+		self.base.accept(EventType.MENU_HS, self.hs.showMenu)
 		
 		self.base.accept(EventType.NEXT_LEVEL, self._nextLevel)
 		self.base.accept('n', self._nextLevel)
@@ -38,6 +55,9 @@ class GameApplication:
 		self.base.accept('r', self._restart)
 		
 		self.base.accept('d', self._toggleDebug )
+		
+		self.base.accept(EventType.EXIT, sys.exit)
+
 		
 		messenger.send(EventType.RESTART)
 	

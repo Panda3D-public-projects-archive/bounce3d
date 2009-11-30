@@ -91,5 +91,4 @@ class GameControl(DirectObject):
 		self.controlChange()
 	
 	def unbind(self):
-		self.menu.hideMenu()
 		print "Key unbinded"

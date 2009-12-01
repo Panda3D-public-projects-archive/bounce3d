@@ -16,7 +16,6 @@ class GameView:
 		self.setLights()
 		
 	def setLights(self):
-		''' @author latenssi '''
 		# Ambient Light
 		ambientLight = AmbientLight( 'ambientLight' )
 		ambientLight.setColor( Vec4( 0.1, 0.1, 0.1, 1 ) )

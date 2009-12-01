@@ -11,7 +11,6 @@ class GameControl(DirectObject):
 	'''
 	Currently the game can be controlled with a keaboard.
 	http://www.panda3d.org/wiki/index.php/Event_Handlers
-	@author J3lly
 	'''
 
 	PLAYER_RIGHT_KEY = "arrow_right"

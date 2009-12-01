@@ -4,8 +4,10 @@ from model.MovingPlane import MovingPlane
 from model.Ball import Ball
 
 from model.SurfaceType import SurfaceType
+from model.LevelFactory import LevelFactory
 
 class Level:
+	''' Combines level geometry, behaviour and model '''
 	
 	MODEL_EGG_LIST=[
 		"../egg/level0_1_visual.egg",
@@ -30,87 +32,34 @@ class Level:
 		self.world = model.world
 		self.pos = pos
 		self.scale = scale
-		
-		self.levelNode = None
-		self.exit = None # Every level should have an exit
-		
-		self.loadEntities(mapNo)
-		
-		self.goal = 0 # kerattavat kolikot
-					
-	def loadEntities( self, mapNo ):
 		self.planes = []
 		self.coins = []
+		self.levelNode = None
+		self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) )
+		self.ball = model.getBall()
+		self.goal = 0 # kerattavat kolikot
+		
+		print 'level ', mapNo
 		
 		if(mapNo == 0):
-			print 'level 0'
-			ball = self.model.getBall().setPosition( (0.0,-20.0,10.0) )
+			self.ball.setPosition( (0.0,-20.0,10.0) )
+			self.exit.setPosition(  (0.0,60.0,7.0) )
 			self.loadLevelEntity(mapNo)
-			self.exit = MovingPlane( self.space, (0.0,60.0,7.0), (1.0,1.0,1.0) )
 			
 		elif (mapNo == 1):
-			print 'level 1'
-			ball = self.model.getBall().setPosition( (0.0,-20.0,10.0) )
-			ball = self.model.getBall()
-			ball.pos = (0.0,-20.0,10.0)
+			self.ball.setPosition( (0.0,-20.0,10.0) )
+			self.exit.setPosition( (0.0,5.0,1.0) )
 			self.loadLevelEntity(mapNo)
-			self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) ) 
 			
 		elif(mapNo == 2):
-			print 'level 2'
-			''' Testing Level '''
-			ball = self.model.getBall().setPosition( (0.0,-20.0,-10.0) )
-			
-			dim = (5.0,5.0,1.0)
-			plane = MovingPlane( self.space, (0.0,0.0,5.0),   dim )
-			plane.rotate = True
-			self.planes.append( plane )
-			
-			
-			for x in xrange(1,5):
-				plane = MovingPlane( self.space, (0.0, -5.0*x, -5.0*x+5.0), dim )
-				self.planes.append( plane )
-			
-			# Floor
-			for x in xrange(-5,5):
-				plane = MovingPlane( self.space, (0.0, -5.0*x, -25.0), (5.0, 5.0, 1.0), SurfaceType.SAND )
-				self.planes.append( plane )
-			
-			# Ceiling
-			for x in xrange(-5,5):
-				plane = MovingPlane( self.space, (0.0, -5.0*x, 20.0), (5.0, 5.0, 1.0) )
-				self.planes.append( plane )
-			
-			self.coins.append( Coin(self.world, self.space, pos = (0.0,-5.0,15.0) ) )
-			self.coins.append( Coin(self.world, self.space, pos = (0.0,-10.0,17.0) ) )
-			
-			# http://www.panda3d.org/apiref.php?page=NodePath
-			
-			# we will not update exit, it remains static
-			self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) )
-			
-			self.trigger = loader.loadModel("box")
-			self.trigger.reparentTo( render )
-			self.trigger.setPos( 0.0, -10.0, -20.0 )
-			
-			self.door = loader.loadModel("box")
-			self.door.reparentTo( self.trigger )
-			self.door.setPos( 0.0, -5, 0 )
-			
-			#base.accept('open_door', self.triggerEvent )
-			#messenger.send('open_door')
-			
+			LevelFactory().load( self, mapNo )
 		else:
-			ball = self.model.getBall().setPosition( (0.0,-20.0,10.0) )
-			self.loadLevelEntity(mapNo)
-			self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) ) 
-	
-	def triggerEvent( self ):
-		self.door.setColor(1,0,0)
+			raise Error
+		
+
 		
 	def loadLevelEntity( self, mapNo):
-		self.levelNode = self._createModelNode( self.pos, self.scale,
-			self.MODEL_EGG_LIST[mapNo] )
+		self.levelNode = self._createModelNode( self.pos, self.scale, self.MODEL_EGG_LIST[mapNo] )
 		self.collNode = loader.loadModel( self.COLLISION_EGG_LIST[mapNo] )
 		self.trimesh = OdeTriMeshData( self.collNode, True )
 		self.collGeom = OdeTriMeshGeom( self.space, self.trimesh )
@@ -127,9 +76,10 @@ class Level:
 	def updateModelNode(self):
 		map( Coin.updateModelNode, self.coins)
 		map( MovingPlane.updateModelNode, self.planes)
+		self.exit.updateModelNode()
 		
 	def removeLevel(self):
-		print 'remove level'
+		
 		self.collGeom = None
 		if ( self.levelNode != None ):
 			self.levelNode.removeNode()
@@ -143,6 +93,9 @@ class Level:
 	def getExit(self):
 		''' Return the geometry of an exit'''
 		return self.exit.getGeom()
-	
+		
 	def getGoal(self):
 		return self.goal
+		
+
+

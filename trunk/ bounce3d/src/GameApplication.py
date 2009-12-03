@@ -32,7 +32,7 @@ class GameApplication:
 			self.base,
 			["Main Menu"],
 			[ "Continue", "Restart", "Highscore", "Exit"],
-			[EventType.MENU, EventType.RESTART, EventType.MENU_HS, EventType.EXIT],
+			[EventType.MENU, EventType.RESTART, EventType.MENU_HS, EventType.EXIT]
 		)
 		self.hs = Menu(
 			self.base,
@@ -40,6 +40,7 @@ class GameApplication:
 			["Back"],
 			[EventType.MENU]
 		)
+		
 		# http://www.panda3d.org/wiki/index.php/Event_Handlers
 		self.base.accept(EventType.UPDATE_HUD, self.hud.updateHUD) # hud event listener
 		
@@ -81,7 +82,7 @@ class GameApplication:
 		messenger.send(EventType.UPDATE_HUD)
 	    
 		# http://www.panda3d.org/wiki/index.php/Tasks
-		taskMgr.doMethodLater(4, self.loop.simulationTask, self.SIM_TASK)
+		taskMgr.doMethodLater(2, self.loop.simulationTask, self.SIM_TASK)
 
 	def _nextLevel(self):
 		if (self.mapNo < 2):

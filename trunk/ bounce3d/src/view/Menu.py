@@ -32,6 +32,8 @@ class Menu:
 		self.item_events = item_events
 		self.selection = selection
 		self.visible = visibility
+		
+		self.generateMenu()
 
 	def generateMenu(self):
 		
@@ -40,19 +42,19 @@ class Menu:
 				text = i,
 				style = 1,
 				fg = (1,1,1,1),
-				pos = (0,(((len(self.info_texts) + len(self.item_texts))*0.5) -(self.info_texts.index(i))*0.1)),
+				pos = (0,((len(self.info_texts) + len(self.item_texts) - self.info_texts.index(i))*0.1)),
 				align = TextNode.ACenter,
 				scale = 0.07
 			)
 			item.hide()
 			self.info_table.append(item)
 			
-		for i in self.item_texts:
+		for j in self.item_texts:
 			item = OnscreenText(
-				text = i,
+				text = j,
 				style = 1,
 				fg = (1,1,1,1),
-				pos = (0,(((len(self.info_texts) + len(self.item_texts))*0.5) -(self.item_texts.index(i))*0.1)),
+				pos = (0,((len(self.item_texts) - self.item_texts.index(j))*0.1)),
 				align = TextNode.ACenter,
 				scale = 0.07
 			)
@@ -69,7 +71,7 @@ class Menu:
 			print "Menu top reached"
 
 	def selectionDown(self):
-		if ( self.selection < (len(self.item_texts)-1) ):
+		if ( self.selection < (len(self.menu_items)-1)):
 			self.menu_items[self.selection].setText(self.item_texts[self.selection])
 			self.menu_items[self.selection+1].setText(self.DEFAULT_SELECTION_POINTERS[0] + self.item_texts[self.selection+1] + self.DEFAULT_SELECTION_POINTERS[1])
 			self.selection += 1
@@ -77,9 +79,8 @@ class Menu:
 			print "Menu bottom reached"
 
 	def select(self):
-		self.hideMenu()
 		messenger.send(self.item_events[self.selection])
-		messenger.send(EventType.CONTROL_CHANGE)
+		self.hideMenu()
 		print "Selection"
 
 	def showMenu(self):
@@ -90,6 +91,7 @@ class Menu:
 				i.show()
 			for j in self.info_table:
 				j.show()
+			print "Menu loaded"
 
 	# Should only be called when a selection is made
 	def hideMenu(self):
@@ -100,3 +102,7 @@ class Menu:
 				i.hide()
 			for j in self.info_table:
 				j.hide()
+			print "Menu unloaded"
+	
+	def getVisibility(self):
+		return self.visible

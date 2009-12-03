@@ -81,7 +81,7 @@ class GameApplication:
 		messenger.send(EventType.UPDATE_HUD)
 	    
 		# http://www.panda3d.org/wiki/index.php/Tasks
-		taskMgr.doMethodLater(0.01, self.loop.simulationTask, self.SIM_TASK)
+		taskMgr.doMethodLater(4, self.loop.simulationTask, self.SIM_TASK)
 
 	def _nextLevel(self):
 		if (self.mapNo < 2):

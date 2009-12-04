@@ -80,7 +80,7 @@ class GameControl(DirectObject):
 		if self.inMenu:
 			self.accept(GameControl.PLAYER_UP_KEY + "-up", self.activeMenu.selectionUp)
 			self.accept(GameControl.PLAYER_DOWN_KEY + "-up", self.activeMenu.selectionDown)
-			self.accept(GameControl.SELECT + "-up", self.activeMenu.selection)
+			self.accept(GameControl.SELECT + "-up", self.activeMenu.select)
 		else:
 			self.accept(GameControl.PLAYER_UP_KEY + "-up", self.ball.arrowUpUp)
 			self.accept(GameControl.PLAYER_DOWN_KEY + "-up", self.ball.arrowDownUp)

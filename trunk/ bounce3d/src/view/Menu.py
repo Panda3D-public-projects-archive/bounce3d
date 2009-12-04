@@ -81,7 +81,7 @@ class Menu:
 	def select(self):
 		messenger.send(self.item_events[self.selection])
 		self.hideMenu()
-		print "Selection"
+		print "Selection ", self
 
 	def showMenu(self):
 		if not self.visible:

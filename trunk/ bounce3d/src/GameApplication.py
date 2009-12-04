@@ -28,7 +28,7 @@ class GameApplication:
 		self.view = GameView( self.base )
 		
 		# Menues
-		self.menu = Menu(
+		self.mmenu = Menu(
 			self.base,
 			["Main Menu"],
 			[ "Continue", "Restart", "Highscore", "Exit"],
@@ -44,8 +44,8 @@ class GameApplication:
 		# http://www.panda3d.org/wiki/index.php/Event_Handlers
 		self.base.accept(EventType.UPDATE_HUD, self.hud.updateHUD) # hud event listener
 		
-		self.base.accept(EventType.MENU, self.menu.showMenu) # Menu event listener
-		self.base.accept('m', self.menu.showMenu)
+		self.base.accept(EventType.MENU, self.mmenu.showMenu) # Menu event listener
+		self.base.accept('m', self.mmenu.showMenu)
 		
 		self.base.accept(EventType.MENU_HS, self.hs.showMenu)
 		
@@ -63,9 +63,12 @@ class GameApplication:
 		messenger.send(EventType.RESTART)
 	
 	def getActiveMenu(self):
-		if self.menu.getVisibility:
-			return self.menu
-		elif self.hs.getVisibility:
+		if self.mmenu.getVisibility():
+			print 'menu vis'
+			return self.mmenu
+		
+		if self.hs.getVisibility():
+			print 'hs vis'
 			return self.hs
 	
 	def _toggleDebug(self):

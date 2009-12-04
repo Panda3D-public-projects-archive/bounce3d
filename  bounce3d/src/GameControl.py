@@ -74,10 +74,21 @@ class GameControl(DirectObject):
 		self.accept(GameControl.TURN_GRAVITY2, model.turnGravityTask2 )
 		
 		model.isListening = True
+		
+		self.activeMenu = None
 	
 	def controlChange(self):
+		print 'controlChange'
 		self.activeMenu = self.app.getActiveMenu()
+		print self.activeMenu
+		
+		self.ignore(GameControl.PLAYER_UP_KEY + "-up")
+		self.ignore(GameControl.PLAYER_DOWN_KEY + "-up")
+		self.ignore(GameControl.SELECT + "-up")
+		
+		
 		if self.inMenu:
+			
 			self.accept(GameControl.PLAYER_UP_KEY + "-up", self.activeMenu.selectionUp)
 			self.accept(GameControl.PLAYER_DOWN_KEY + "-up", self.activeMenu.selectionDown)
 			self.accept(GameControl.SELECT + "-up", self.activeMenu.select)
@@ -92,3 +103,4 @@ class GameControl(DirectObject):
 		
 	def unbind(self):
 		print "Key unbinded"
+	

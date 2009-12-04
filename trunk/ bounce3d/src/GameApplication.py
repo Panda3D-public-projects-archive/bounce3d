@@ -62,6 +62,12 @@ class GameApplication:
 		
 		messenger.send(EventType.RESTART)
 	
+	def getActiveMenu(self):
+		if self.menu.getVisibility:
+			return self.menu
+		elif self.hs.getVisibility:
+			return self.hs
+	
 	def _toggleDebug(self):
 		# http://www.panda3d.org/wiki/index.php/The_Default_Camera_Driver
 		#self.base.oobe()
@@ -77,7 +83,7 @@ class GameApplication:
 		    
 		self.model = GameModel( self.base, self.mapNo)
 		self.loop = GameLoop( self.model )
-		self.keys = GameControl( self.model, self.menu, self )
+		self.keys = GameControl( self.model, self )
 		
 		messenger.send(EventType.UPDATE_HUD)
 	    

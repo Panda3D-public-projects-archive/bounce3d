@@ -6,17 +6,15 @@ from model.Ball import Ball
 from model.SurfaceType import SurfaceType
 from model.LevelFactory import LevelFactory
 
+# for Trigger
+from pandac.PandaModules import ( CollisionTraverser,
+	CollisionSphere, CollisionNode, NodePath,
+	PandaNode, CollisionHandlerEvent)
+
+
 class Level:
 	''' Combines level geometry, behaviour and model '''
-	
-	MODEL_EGG_LIST=[
-		"../egg/level0_1_visual.egg",
-		"../egg/level0_2_visual.egg",
-		"../egg/level0_3_visual.egg" ]
-	COLLISION_EGG_LIST=[
-		"../egg/level0_1_collision.egg",
-		"../egg/level0_2_collision.egg",
-		"../egg/level0_3_collision.egg"]
+
 	POS_DEFAULT = ( 0,0,0 )
 	SCALE_DEFAULT = ( 1,1,1 )
 	
@@ -32,35 +30,40 @@ class Level:
 		self.world = model.world
 		self.pos = pos
 		self.scale = scale
-		self.planes = []
-		self.coins = []
+		self._planes = []
+		self._coins = []
+		self._triggers = []
+		
 		self.levelNode = None
 		self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) )
 		self.ball = model.getBall()
 		self.goal = 0 # kerattavat kolikot
 		
-		print 'level ', mapNo
+		print 'Loading level ', mapNo, '...'
+		self.initCollisionTest()
+		factory = LevelFactory()
+		factory.load( self, mapNo )
 		
-		if(mapNo == 0):
-			self.ball.setPosition( (0.0,-20.0,10.0) )
-			self.exit.setPosition(  (0.0,60.0,7.0) )
-			self.loadLevelEntity(mapNo)
-			
-		elif (mapNo == 1):
-			self.ball.setPosition( (0.0,-20.0,10.0) )
-			self.exit.setPosition( (0.0,5.0,1.0) )
-			self.loadLevelEntity(mapNo)
-			
-		elif(mapNo == 2):
-			LevelFactory().load( self, mapNo )
-		else:
-			raise Error
+	def initCollisionTest(self):
+		self.collHandEvent = CollisionHandlerEvent()
+		self.collHandEvent.addInPattern('into-%in')
+		base.cTrav = CollisionTraverser('test name')
+		if False:
+			base.cTrav.showCollisions(render)
 		
-
+		cName = 'BallCollNode'
+		cSphere = CollisionSphere( 0,0,0, 1.0)
+		cNode = CollisionNode( cName )
+		cNode.addSolid( cSphere )
+		cNodePath = self.ball.modelNode.attachNewNode( cNode )
+		base.cTrav.addCollider( cNodePath, self.collHandEvent )
+	
+	def onTrigger(self, entry):
+		print 'trigger on'
 		
-	def loadLevelEntity( self, mapNo):
-		self.levelNode = self._createModelNode( self.pos, self.scale, self.MODEL_EGG_LIST[mapNo] )
-		self.collNode = loader.loadModel( self.COLLISION_EGG_LIST[mapNo] )
+	def loadLevelEntity( self, mEgg, cEgg):
+		self.levelNode = self._createModelNode( self.pos, self.scale, mEgg )
+		self.collNode = loader.loadModel( cEgg )
 		self.trimesh = OdeTriMeshData( self.collNode, True )
 		self.collGeom = OdeTriMeshGeom( self.space, self.trimesh )
 		self.space.setSurfaceType( self.collGeom, SurfaceType.FLOOR )
@@ -74,8 +77,8 @@ class Level:
 		return modelNode
 		
 	def updateModelNode(self):
-		map( Coin.updateModelNode, self.coins)
-		map( MovingPlane.updateModelNode, self.planes)
+		map( Coin.updateModelNode, self._coins)
+		map( MovingPlane.updateModelNode, self._planes)
 		self.exit.updateModelNode()
 		
 	def removeLevel(self):
@@ -84,8 +87,8 @@ class Level:
 		if ( self.levelNode != None ):
 			self.levelNode.removeNode()
 		
-		map( MovingPlane.removeNode, self.planes )
-		map( Coin.removeNode, self.coins )
+		map( MovingPlane.removeNode, self._planes )
+		map( Coin.removeNode, self._coins )
 		
 		if ( self.exit != None ):
 			self.exit.removeNode()
@@ -97,5 +100,37 @@ class Level:
 	def getGoal(self):
 		return self.goal
 		
-
-
+	def addCoin( self, pos ):
+		self._coins.append( Coin(self.world, self.space, pos ) )
+	
+	def getCoins( self ):
+		return self._coins
+		
+	def addTrigger(self, name, pos, radius):
+		'''
+		http://www.panda3d.org/apiref.php?page=DirectObject
+		http://www.panda3d.org/wiki/index.php/Collision_Solids
+		http://www.panda3d.org/apiref.php?page=CollisionTraverser
+		http://www.panda3d.org/apiref.php?page=CollisionHandlerEvent
+		http://www.panda3d.org/apiref.php?page=NodePath#find
+		'''
+		cSphere = CollisionSphere(pos[0], pos[1], pos[2], radius)
+		cNode = CollisionNode( name )
+		cNode.addSolid(cSphere)
+		
+		model = render.find(name)
+		if not model.isEmpty():
+			model.removeNode()
+			
+		cnodePath = render.attachNewNode( cNode )
+		cnodePath.show()
+		base.cTrav.addCollider( cnodePath, self.collHandEvent )
+		base.accept( 'into-' + name, self.onTrigger )
+	
+	def addPlane( self, pos, dim, type ):
+		self._planes.append( MovingPlane( self.space, pos, dim, type) )
+		
+	def addExit( self, pos ):
+		self.exit.setPosition( pos )
+		self.addTrigger( 'ExitTriggerNode', pos, 2.0 )
+		

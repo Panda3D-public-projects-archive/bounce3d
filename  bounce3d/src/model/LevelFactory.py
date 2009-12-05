@@ -1,58 +1,65 @@
 
-from model.MovingPlane import MovingPlane
-from model.SurfaceType import SurfaceType
-from model.Coin import Coin
+from model.SurfaceType import SurfaceType	
 
 class LevelFactory:
 	'''
-		Hiukan kesken
-		Parempi tapa olisi ladata kentta dynaamisesti
-		erillisesta tiedosta
+		Jokaisen tason tiedot voitaisiin ladata erillisesta tiedostosta.
+		http://www.panda3d.org/apiref.php?page=NodePath
 	'''
+	MODEL_EGG =[
+		"../egg/level0_1_visual.egg",
+		"../egg/level0_2_visual.egg",
+		"../egg/level0_3_visual.egg" ]
 	
+	COLLISION_EGG =[
+		"../egg/level0_1_collision.egg",
+		"../egg/level0_2_collision.egg",
+		"../egg/level0_3_collision.egg"]
+
 	def __init__(self):
 		pass
 		
-	def load( self, level, number ):
-		'''represents currently level 2'''
-		
-		ball = level.ball
-		planes = level.planes
-		coins = level.coins
-		world = level.world
-		s = level.space
+	def load( self, level, mapNo ):
 
-		''' Testing Level '''
-		y = 0.0
-		
-		ball.setPosition( (y, 1.0,1.0) )
+		if(mapNo == 0):
+			level.ball.setPosition( (0.0,-20.0,10.0) )
+			level.addExit( (0.0, 60.0, 7.0) )
+			level.loadLevelEntity( self.MODEL_EGG[mapNo], self.COLLISION_EGG[mapNo] )
+			
+		elif (mapNo == 1):
+			level.ball.setPosition( (0.0,-20.0,10.0) )
+			level.addExit( (0.0,60.0,7.0) )
+			level.loadLevelEntity( self.MODEL_EGG[mapNo], self.COLLISION_EGG[mapNo] )
+			
+		elif(mapNo == 2):
+			self._TestLevel(level)
+		else:
+			raise Error
+			
+	def _TestLevel(self, level):
+		level.ball.setPosition( (0.0, 1.0, 1.0) )
 		
 		dim = (2.0, 5.0, 0.5)
-		plane = MovingPlane( s, (y,0.0,5.0),   dim )
-		plane.rotate = True
-		planes.append( plane )
 		
 		for x in xrange(1,5):
-			planes.append( MovingPlane( s, (y, 5.0*x, 5.0*x), dim ) )
+			level.addPlane( (0.0, 5.0*x, 5.0*x), dim, SurfaceType.FLOOR ) # steps
 		
-		floor = 0.0
-		ceiling = 20.0
 		for x in xrange(0,5):
-			planes.append( MovingPlane( s, (y, 5.0*x, floor), dim, SurfaceType.SAND ) )
-			planes.append( MovingPlane( s, (y, 5.0*x, ceiling), dim ) )
+			level.addPlane( (0.0, 5.0*x, 0.0), dim, SurfaceType.SAND ) # floor
+			level.addPlane( (0.0, 5.0*x, 20.0), dim, SurfaceType.FLOOR ) # ceiling
 
-		# Walls
-		for z in xrange(1, 4):
-			planes.append( MovingPlane( s, (y, -2.5, 5.0*z), (2.0, 0.5, 2) ) )
-			planes.append( MovingPlane( s, (y, 20.0, 5.0*z), (2.0, 0.5, 2) ) )
+		dim = (2.0, 0.6, 3)
+		
+		for z in xrange(0, 5):
+			level.addPlane( (0.0, -3.0, 5.0*z), dim, SurfaceType.FLOOR ) # left wall
+			level.addPlane( (0.0, 23.0, 5.0*z), dim, SurfaceType.FLOOR ) # right wall
 			
-		coins.append( Coin(world, s, (y,5.0,15.0) ) )
-		coins.append( Coin(world, s, (y,10.0,17.0) ) )
+		level.addCoin( (0.0, 5.0, 15.0 ) )
+		level.addCoin( (0.0, 10.0, 17.0 ) )
 		
-		# http://www.panda3d.org/apiref.php?page=NodePath
+		level.addExit( (0.0, 14.0, 18.0) )
 		
-		# we will not update exit, it remains static
-		level.exit.setPosition( (y, 10.0, 18.0) )
+		level.addTrigger( 'TriggerBallNode', (0.0, 8.0, 2.0), 1.0 )
 		
-		#base.accept('open_door', triggerEvent )
-		#messenger.send('open_door')
+		level.onTrigger = level.onTrigger
+		

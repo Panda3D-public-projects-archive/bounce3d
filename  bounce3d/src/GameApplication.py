@@ -18,12 +18,14 @@ import sys
 class GameApplication:
 	
 	SIM_TASK = "Physics Simulation"
+	LOAD_TIME = 2
+	START_MAP = 0
 	
 	def __init__(self):
 	
 		self.base = ShowBase()
 		self.model = self.loop = self.keys = None
-		self.mapNo = 0 #default
+		self.mapNo = self.START_MAP
 		self.hud = Hud()
 		self.view = GameView( self.base )
 		
@@ -91,7 +93,7 @@ class GameApplication:
 		messenger.send(EventType.UPDATE_HUD)
 	    
 		# http://www.panda3d.org/wiki/index.php/Tasks
-		taskMgr.doMethodLater(2, self.loop.simulationTask, self.SIM_TASK)
+		taskMgr.doMethodLater(self.LOAD_TIME, self.loop.simulationTask, self.SIM_TASK)
 
 	def _nextLevel(self):
 		if (self.mapNo < 2):

@@ -99,7 +99,7 @@ class GameModel:
 		if body1 == self.ball.getBody() or body2 == self.ball.getBody():
 			self.ball.refreshCollisionTime(entry)
 	
-		for coin in self.level.coins:
+		for coin in self.level.getCoins():
 			if body1 == coin.getBody() and body2 == self.ball.getBody():
 				coin.collect()
 				messenger.send(EventType.UPDATE_HUD)

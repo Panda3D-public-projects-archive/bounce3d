@@ -4,7 +4,6 @@ from model.MovingPlane import MovingPlane
 from model.Ball import Ball
 
 from model.SurfaceType import SurfaceType
-from model.LevelFactory import LevelFactory
 
 # for Trigger
 from pandac.PandaModules import ( CollisionTraverser,
@@ -21,7 +20,6 @@ class Level:
 	def __init__(
 		self,
 		model,
-		mapNo,
 		pos = POS_DEFAULT,
 		scale = SCALE_DEFAULT,
 	):
@@ -35,14 +33,10 @@ class Level:
 		self._triggers = []
 		
 		self.levelNode = None
-		self.exit = MovingPlane( self.space, (0.0,5.0,1.0), (1.0,1.0,1.0) )
 		self.ball = model.getBall()
 		self.goal = 0 # kerattavat kolikot
 		
-		print 'Loading level ', mapNo, '...'
 		self.initCollisionTest()
-		factory = LevelFactory()
-		factory.load( self, mapNo )
 		
 	def initCollisionTest(self):
 		self.collHandEvent = CollisionHandlerEvent()
@@ -106,8 +100,10 @@ class Level:
 	def getCoins( self ):
 		return self._coins
 		
-	def addTrigger(self, name, pos, radius):
+	def addTrigger(self, name, pos, radius, function):
 		'''
+		Adds a new CollisionNode into base.cTrav and an Event into the EventManager.
+		
 		http://www.panda3d.org/apiref.php?page=DirectObject
 		http://www.panda3d.org/wiki/index.php/Collision_Solids
 		http://www.panda3d.org/apiref.php?page=CollisionTraverser
@@ -118,19 +114,25 @@ class Level:
 		cNode = CollisionNode( name )
 		cNode.addSolid(cSphere)
 		
-		model = render.find(name)
+		model = render.find(name) # deletes old one's
 		if not model.isEmpty():
 			model.removeNode()
-			
+		
+		# Now we alter global variables. (side-effect)		
 		cnodePath = render.attachNewNode( cNode )
 		cnodePath.show()
 		base.cTrav.addCollider( cnodePath, self.collHandEvent )
-		base.accept( 'into-' + name, self.onTrigger )
+		# base.accept( 'into-' + name, self.onTrigger )
+		base.accept( 'into-' + name, function )
 	
 	def addPlane( self, pos, dim, type ):
 		self._planes.append( MovingPlane( self.space, pos, dim, type) )
 		
 	def addExit( self, pos ):
-		self.exit.setPosition( pos )
-		self.addTrigger( 'ExitTriggerNode', pos, 2.0 )
+		self.exit = MovingPlane( self.space, pos, (1.0,1.0,1.0) )
+		self.addTrigger( 'ExitTriggerNode', pos, 2.0, self.onExit )
 		
+	def onExit( self, entry ):
+		print "On Exit"
+		
+	

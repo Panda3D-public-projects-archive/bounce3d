@@ -1,5 +1,6 @@
 
 from model.SurfaceType import SurfaceType	
+from model.Level import Level
 
 class LevelFactory:
 	'''
@@ -19,24 +20,30 @@ class LevelFactory:
 	def __init__(self):
 		pass
 		
-	def load( self, level, mapNo ):
-
+	def load( self, model, mapNo ):
+		
+		print 'Loading level ', mapNo, '...'
+		map = Level(model)
+	
 		if(mapNo == 0):
-			level.ball.setPosition( (0.0,-20.0,10.0) )
-			level.addExit( (0.0, 60.0, 7.0) )
-			level.loadLevelEntity( self.MODEL_EGG[mapNo], self.COLLISION_EGG[mapNo] )
-			
+			map.ball.setPosition( (0.0,-20.0,10.0) )
+			map.addExit( (0.0, 60.0, 7.0) )
+			map.loadLevelEntity( self.MODEL_EGG[mapNo], self.COLLISION_EGG[mapNo] )
 		elif (mapNo == 1):
-			level.ball.setPosition( (0.0,-20.0,10.0) )
-			level.addExit( (0.0,60.0,7.0) )
-			level.loadLevelEntity( self.MODEL_EGG[mapNo], self.COLLISION_EGG[mapNo] )
-			
+			map.ball.setPosition( (0.0,-20.0,10.0) )
+			map.addExit( (0.0,60.0,7.0) )
+			map.loadLevelEntity( self.MODEL_EGG[mapNo], self.COLLISION_EGG[mapNo] )
 		elif(mapNo == 2):
-			self._TestLevel(level)
+			map = self.Level2(model)
 		else:
 			raise Error
 			
-	def _TestLevel(self, level):
+		return map
+			
+	def Level2(self, model):
+		''' LevelLoadingScript '''
+		
+		level = Level(model)
 		level.ball.setPosition( (0.0, 1.0, 1.0) )
 		
 		dim = (2.0, 5.0, 0.5)
@@ -59,7 +66,6 @@ class LevelFactory:
 		
 		level.addExit( (0.0, 14.0, 18.0) )
 		
-		level.addTrigger( 'TriggerBallNode', (0.0, 8.0, 2.0), 1.0 )
-		
-		level.onTrigger = level.onTrigger
-		
+		#level.addTrigger( 'TriggerBallNode', (0.0, 8.0, 2.0), 1.0, LevelFactory.TestFunction )
+		return level
+	

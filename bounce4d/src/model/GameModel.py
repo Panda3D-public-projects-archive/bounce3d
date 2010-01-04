@@ -19,16 +19,16 @@ CollisionTraverser, CollisionHandlerQueue)
 # from pandac.PandaModules import LPoint3f
 
 from model.Ball import Ball
-from model.Level import Level
+
 from model.Player import Player
 from model.Coin import Coin
-from model.MovingPlane import MovingPlane
 from model.Camera import Camera
 
 from event.Event import createNamedEvent
 from event.EventType import EventType
 
 from model.SurfaceType import SurfaceType
+from model.LevelFactory import LevelFactory
 
 class GameModel:
 	#Represents the world data.
@@ -54,7 +54,8 @@ class GameModel:
 		
 		self.ball = Ball(self.world, self.space, "Johanneksen pallo")
 		
-		self.level = Level(self, mapNo)	
+		factory = LevelFactory()
+		self.level = factory.load( self, mapNo )
 		self.player = Player("Johannes")
 		
 		self.camera = Camera(base, self.ball)

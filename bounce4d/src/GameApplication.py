@@ -18,8 +18,8 @@ import sys
 class GameApplication:
 	
 	SIM_TASK = "Physics Simulation"
-	LOAD_TIME = 2
-	START_MAP = 0
+	LOAD_TIME = 1
+	START_MAP = 2
 	
 	def __init__(self):
 	

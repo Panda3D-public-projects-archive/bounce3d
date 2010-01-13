@@ -201,7 +201,7 @@ class Ball:
 		return self.areCloseEnough(bodyPos, colPos)
 
 	def areCloseEnough( self, pos1, pos2 ):
-		tolerance = 0.3
+		tolerance = 0.5
 		dy = pos1[1] - pos2[1]
 		# >= is important
 		if (dy >= 0.0 and dy < tolerance) or (dy < 0.0 and dy > -tolerance):

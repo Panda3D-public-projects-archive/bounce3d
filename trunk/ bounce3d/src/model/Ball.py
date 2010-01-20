@@ -264,10 +264,12 @@ class Ball:
 				else:
 					messenger.send('updateHUD', [", Ball state: ???"])
 					
-	def haveRoughlySameForceDirection(self,ivec,iconstant):
-		angle = self.angleVec3(ivec,iconstant)
+	def haveRoughlySameDirection(self,ivec,ivec2):
+		if ivec.length() == 0 or ivec2.length() == 0:
+			return False
+		angle = self.angleVec3(ivec,ivec2)
 		#print angle
-		if (-math.pi/4.0) < angle and angle < (math.pi/4.0):
+		if (-math.pi/8.0) < angle and angle < (math.pi/8.0):
 			return True
 		return False
 	
@@ -300,17 +302,19 @@ class Ball:
 			factor = 1.0
 			if self.moveLeft:
 				factor = -1.0
-			v3 = self.perpendicularUnitVec3WithFixedX(g)
-			v3 *= factor*Ball.FORCE/divisor
-			v3.setX(0.0)
-			v3.setZ(0.0)
+				
 			# Limit speed to some constant
-			if self.haveRoughlySameForceDirection(self.ballBody.getLinearVel(),v3) and abs(self.ballBody.getLinearVel().length()) > self.MAX_MOVEMENT_SPEED:
-				factor = 0.0
 			v3 = self.perpendicularUnitVec3WithFixedX(g)
 			v3 *= factor*Ball.FORCE/divisor
-			#v3 = self.perpendicularUnitVec3WithFixedX(g)
-			#v3 *= factor*Ball.FORCE/divisor
+			lv = self.ballBody.getLinearVel()
+			lv.setX(0.0)
+			lv.setZ(0.0)
+			if self.haveRoughlySameDirection(lv,v3) and abs(lv.length()) > self.MAX_MOVEMENT_SPEED:
+				factor = 0.0
+
+			v3 = self.perpendicularUnitVec3WithFixedX(g)
+			v3 *= factor*Ball.FORCE/divisor
+
 			self.ballBody.setForce( y = v3.getY() , x = v3.getX(), z = v3.getZ())
 			v3 = self.perpendicularUnitVec3WithFixedX(g)
 			v3 *= factor*Ball.TORQUE/divisor

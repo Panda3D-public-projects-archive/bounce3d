@@ -32,6 +32,7 @@ class Ball:
 	JUMP_FORCE = 120000
 	MAX_JUMP_REACH_TIME = 0.7
 	COLLISION_THRESHOLD_TIME = 0.33
+	MAX_MOVEMENT_SPEED = 20.0
 
 	def __init__(
 		self,
@@ -210,7 +211,7 @@ class Ball:
 			if (dz >= 0.0 and dz < tolerance) or (dz < 0.0 and dz > -tolerance):
 				return True
 		return False
-		
+
 	def refreshCollisionTime( self, collisionEntry):
 		body = self.ballBody
 		pos = body.getPosition()
@@ -263,6 +264,13 @@ class Ball:
 				else:
 					messenger.send('updateHUD', [", Ball state: ???"])
 					
+	def haveRoughlySameForceDirection(self,ivec,iconstant):
+		angle = self.angleVec3(ivec,iconstant)
+		#print angle
+		if (-math.pi/4.0) < angle and angle < (math.pi/4.0):
+			return True
+		return False
+	
 	def updateModelNode(self):
 		''' Update objects after one physics iteration '''		
 		now = globalClock.getLongTime()
@@ -294,6 +302,15 @@ class Ball:
 				factor = -1.0
 			v3 = self.perpendicularUnitVec3WithFixedX(g)
 			v3 *= factor*Ball.FORCE/divisor
+			v3.setX(0.0)
+			v3.setZ(0.0)
+			# Limit speed to some constant
+			if self.haveRoughlySameForceDirection(self.ballBody.getLinearVel(),v3) and abs(self.ballBody.getLinearVel().length()) > self.MAX_MOVEMENT_SPEED:
+				factor = 0.0
+			v3 = self.perpendicularUnitVec3WithFixedX(g)
+			v3 *= factor*Ball.FORCE/divisor
+			#v3 = self.perpendicularUnitVec3WithFixedX(g)
+			#v3 *= factor*Ball.FORCE/divisor
 			self.ballBody.setForce( y = v3.getY() , x = v3.getX(), z = v3.getZ())
 			v3 = self.perpendicularUnitVec3WithFixedX(g)
 			v3 *= factor*Ball.TORQUE/divisor

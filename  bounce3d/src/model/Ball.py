@@ -20,7 +20,7 @@ class Ball:
 	HPR_DEFAULT = ( 0,0,0 )
 	MODEL_EGG_DEFAULT = "../egg/paahahmo.egg"
 	JUMP_SOUND_DEFAULT = "../media/jump_sound.wav"
-	BOUNCE_SOUND_DEFAULT = "../media/bounce_sound.aiff"
+	BOUNCE_SOUND_DEFAULT = "../media/bounce_sound.wav"
 
 	BALL_BODY_MASS_WEIGHT = 1000
 	BALL_BODY_MASS_RADIUS = 1

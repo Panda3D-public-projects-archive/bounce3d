@@ -19,6 +19,7 @@ class Ball:
 	SCALE_DEFAULT = ( 1,1,1 )
 	HPR_DEFAULT = ( 0,0,0 )
 	MODEL_EGG_DEFAULT = "../egg/paahahmo.egg"
+	JUMP_SOUND_DEFAULT = "../media/bounce_sound.wav"
 	
 	BALL_BODY_MASS_WEIGHT = 1000
 	BALL_BODY_MASS_RADIUS = 1
@@ -56,6 +57,7 @@ class Ball:
 		self.lastCollisionTime = 0.0
 		self.lastCollisionIsGround = True
 		self.lastGroundCollisionBodyPos = None
+		self.jumpSound = loader.loadSfx(self.JUMP_SOUND_DEFAULT)
 		
 		if Ball.MOVEMENT_DEBUG:
 			self.lastDrawTime = 0.0
@@ -161,6 +163,11 @@ class Ball:
 		return out
 		
 	def jumpOn( self ):
+		if self.isColliding():
+			if self.jumpSound != None:
+				if self.jumpSound.status() != 1:
+					self.jumpSound.stop()
+				self.jumpSound.play()
 		if self.isColliding() == True and self.lastCollisionIsGround:
 			self.jumping = True
 			self.jumpStarted = globalClock.getLongTime()

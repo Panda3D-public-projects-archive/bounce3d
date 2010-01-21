@@ -19,8 +19,9 @@ class Ball:
 	SCALE_DEFAULT = ( 1,1,1 )
 	HPR_DEFAULT = ( 0,0,0 )
 	MODEL_EGG_DEFAULT = "../egg/paahahmo.egg"
-	JUMP_SOUND_DEFAULT = "../media/bounce_sound.wav"
-	
+	JUMP_SOUND_DEFAULT = "../media/jump_sound.wav"
+	BOUNCE_SOUND_DEFAULT = "../media/bounce_sound.aiff"
+
 	BALL_BODY_MASS_WEIGHT = 1000
 	BALL_BODY_MASS_RADIUS = 1
 	FORCE = 90000
@@ -58,6 +59,7 @@ class Ball:
 		self.lastCollisionIsGround = True
 		self.lastGroundCollisionBodyPos = None
 		self.jumpSound = loader.loadSfx(self.JUMP_SOUND_DEFAULT)
+		self.bounceSound = loader.loadSfx(self.BOUNCE_SOUND_DEFAULT)
 		
 		if Ball.MOVEMENT_DEBUG:
 			self.lastDrawTime = 0.0
@@ -161,13 +163,23 @@ class Ball:
 			out.setZ(0.0)
 		out /= out.length()
 		return out
-		
-	def jumpOn( self ):
-		if self.isColliding():
+	
+	def playSound(self, name, override):
+		if name == "jump":
 			if self.jumpSound != None:
-				if self.jumpSound.status() != 1:
+				if override == False and self.jumpSound.status() != 1:
 					self.jumpSound.stop()
 				self.jumpSound.play()
+		if name == "bounce":
+			if self.bounceSound != None:
+				if override == False and self.bounceSound.status() != 1:
+					self.bounceSound.stop()
+				self.bounceSound.play()
+		return
+
+	def jumpOn( self ):
+		if self.isColliding():
+			self.playSound("jump", False)
 		if self.isColliding() == True and self.lastCollisionIsGround:
 			self.jumping = True
 			self.jumpStarted = globalClock.getLongTime()
@@ -223,6 +235,9 @@ class Ball:
 		body = self.ballBody
 		pos = body.getPosition()
 		now = globalClock.getLongTime()
+		
+		if self.isColliding() == False:
+			self.playSound("bounce", False)
 		
 		'''
 		Only "sample" collisions occasionally, should be enough for jumping.

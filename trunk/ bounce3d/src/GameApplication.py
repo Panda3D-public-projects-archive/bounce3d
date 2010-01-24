@@ -28,6 +28,7 @@ class GameApplication:
 		self.mapNo = self.START_MAP
 		self.hud = Hud()
 		self.view = GameView( self.base )
+		self.keyInit = False
 		
 		# Menues
 		self.mmenu = Menu(
@@ -42,6 +43,8 @@ class GameApplication:
 			["Back"],
 			[EventType.MENU]
 		)
+		
+		self.menues = [self.mmenu,self.hs]
 		
 		# http://www.panda3d.org/wiki/index.php/Event_Handlers
 		self.base.accept(EventType.UPDATE_HUD, self.hud.updateHUD) # hud event listener
@@ -65,13 +68,9 @@ class GameApplication:
 		messenger.send(EventType.RESTART)
 	
 	def getActiveMenu(self):
-		if self.mmenu.getVisibility():
-			print 'menu vis'
-			return self.mmenu
-		
-		if self.hs.getVisibility():
-			print 'hs vis'
-			return self.hs
+		for i  in range(0,len(self.menues)-1):
+			if (self.menues[i].getVisibility()):
+				return self.menues[i]
 	
 	def _toggleDebug(self):
 		# http://www.panda3d.org/wiki/index.php/The_Default_Camera_Driver
@@ -88,7 +87,13 @@ class GameApplication:
 		    
 		self.model = GameModel( self.base, self.mapNo)
 		self.loop = GameLoop( self.model )
-		self.keys = GameControl( self.model, self )
+		if(self.keyInit):
+			self.keys.updateResources( self.model, self )
+			print 'Key update'
+		else:
+			print 'Key INIT'
+			self.keys = GameControl( self.model, self )
+			self.keyInit = True
 		
 		messenger.send(EventType.UPDATE_HUD)
 	    

@@ -23,23 +23,61 @@ class GameControl(DirectObject):
 	RESTART_LEVEL = "r"
 	SELECT = "enter"
 
-	def __init__(self, model, app, b):
-		self.player = model.getPlayer()
-		self.ball = model.getBall()
-		self.app = app
-		self.inMenu = False
+	def __init__(self, model, app):
+		self.player = 	self.ball = self.app = self.inMenu = None
 		self.model = model
-		self.initEvents()
-		
-		if b:
-			self.bStartInit()
-		else:
-			self.initEvents()
-
-		model.isListening = True
                 
 		self.activeMenu = None
+
+		"""
+		print 'GameControl.__init__'
+		self.model = self.modelInit(model)
+		self.ball = self.ballInit(model)
+		self.player = self.playerInit(model)
 		
+		self.app = app
+		self.inMenu = False
+		self.activeMenu = None
+		self.model= model
+		self.ball = model.getBall()
+		self.player = model.getPlayer()
+		"""
+		
+
+		if (self.model != None):
+			print 'GameControl.__init__ = True'
+			self.app = app
+			self.inMenu = False
+			self.activeMenu = None
+			self.model= model
+			self.ball = model.getBall()
+			self.player = model.getPlayer()
+			model.isListening = True
+			self.initEvents()
+			print self.ball
+		else:
+			print 'GameControl.__init__ = False'
+			self.app = app
+			self.bStartInit()
+
+	
+	def modelInit(self, model):
+		if (model == None): return None
+		else: return model
+		
+	def ballInit(self, model):
+		print 'GameControl.ballInit'
+		if (model == None):
+			print 'PALAUTUS : NONE'
+			return None
+		else: return model.getBall()
+		
+	def playerInit(self, model):
+		if (model == None): return None
+		else: return model.getPlayer()
+
+		
+
 	def initEvents(self):
 		print 'GameControl.initEvents'
 		playerMoveRightOn = createNamedEvent(
@@ -86,25 +124,36 @@ class GameControl(DirectObject):
 		self.accept(GameControl.TURN_GRAVITY, self.model.turnGravityTask )
 		self.accept(GameControl.TURN_GRAVITY2, self.model.turnGravityTask2 )
 		
+		print self.ball
 		
 	def bStartInit(self):
 		print 'GameControl.bStartInit'
 		self.accept(EventType.CONTROL_CHANGE, self.controlLocation)
+		"""
+		self.activeMenu = self.app.getActiveMenu()
+		self.accept(GameControl.PLAYER_UP_KEY + "-up", self.activeMenu.selectionUp)
+		self.accept(GameControl.PLAYER_DOWN_KEY + "-up", self.activeMenu.selectionDown)
+		self.accept(GameControl.SELECT + "-up", self.activeMenu.select)
+		"""
 	
 	def controlChange(self):
 		print 'GameControl.controlChange'
 		self.activeMenu = self.app.getActiveMenu()
 		print self.activeMenu
+		#self.ball = self.ballInit()
+		print self.ball
 		
 		self.ignore(GameControl.PLAYER_UP_KEY + "-up")
 		self.ignore(GameControl.PLAYER_DOWN_KEY + "-up")
 		self.ignore(GameControl.SELECT + "-up")
 		
-		if(self.inMenu and (self.activeMenu != None)):
+		if (self.inMenu and (self.activeMenu != None)):
 			self.accept(GameControl.PLAYER_UP_KEY + "-up", self.activeMenu.selectionUp)
 			self.accept(GameControl.PLAYER_DOWN_KEY + "-up", self.activeMenu.selectionDown)
 			self.accept(GameControl.SELECT + "-up", self.activeMenu.select)
 		else:
+			print 'Pallo on:'
+			print self.ball
 			self.accept(GameControl.PLAYER_UP_KEY + "-up", self.ball.arrowUpUp)
 			self.accept(GameControl.PLAYER_DOWN_KEY + "-up", self.ball.arrowDownUp)
 			self.accept(GameControl.SELECT + "-up",self.unbind )
@@ -113,6 +162,7 @@ class GameControl(DirectObject):
 		print 'GameControl.controlLocation'
 		self.inMenu = not self.inMenu
 		print self.inMenu
+		print self.ball
 		self.controlChange()
 		
 	def unbind(self):

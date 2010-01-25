@@ -98,8 +98,7 @@ class GameApplication:
 	def beforeStart(self):
 		print 'GameApplication.beforeStart'
 		self.hud.hideHUD()
-		self.model = GameModel( self.base, self.mapNo)
-		self.keys = GameControl(self.model, self,True)
+		keysssss = GameControl(self.model, self)
 		self.brmenu.showMenu()
 		self.run()
 		
@@ -115,7 +114,7 @@ class GameApplication:
 			print 'Key update'
 		else:
 			print 'Key INIT'
-			self.keys = GameControl( self.model, self ,False )
+			self.keys = GameControl( self.model, self)
 			self.keyInit = True
 		
 		messenger.send(EventType.UPDATE_HUD)

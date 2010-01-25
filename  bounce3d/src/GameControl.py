@@ -23,19 +23,25 @@ class GameControl(DirectObject):
 	RESTART_LEVEL = "r"
 	SELECT = "enter"
 
-	def __init__(self, model, app):
+	def __init__(self, model, app, b):
 		self.player = model.getPlayer()
 		self.ball = model.getBall()
 		self.app = app
 		self.inMenu = False
 		self.model = model
 		self.initEvents()
+		
+		if b:
+			self.bStartInit()
+		else:
+			self.initEvents()
 
 		model.isListening = True
-		
+                
 		self.activeMenu = None
 		
 	def initEvents(self):
+		print 'GameControl.initEvents'
 		playerMoveRightOn = createNamedEvent(
 			self.player.name, EventType.PLAYER_MOVE_RIGHT_ON
 		)
@@ -79,9 +85,14 @@ class GameControl(DirectObject):
 		
 		self.accept(GameControl.TURN_GRAVITY, self.model.turnGravityTask )
 		self.accept(GameControl.TURN_GRAVITY2, self.model.turnGravityTask2 )
-
+		
+		
+	def bStartInit(self):
+		print 'GameControl.bStartInit'
+		self.accept(EventType.CONTROL_CHANGE, self.controlLocation)
+	
 	def controlChange(self):
-		print 'controlChange'
+		print 'GameControl.controlChange'
 		self.activeMenu = self.app.getActiveMenu()
 		print self.activeMenu
 		
@@ -89,7 +100,7 @@ class GameControl(DirectObject):
 		self.ignore(GameControl.PLAYER_DOWN_KEY + "-up")
 		self.ignore(GameControl.SELECT + "-up")
 		
-		if self.inMenu:
+		if(self.inMenu and (self.activeMenu != None)):
 			self.accept(GameControl.PLAYER_UP_KEY + "-up", self.activeMenu.selectionUp)
 			self.accept(GameControl.PLAYER_DOWN_KEY + "-up", self.activeMenu.selectionDown)
 			self.accept(GameControl.SELECT + "-up", self.activeMenu.select)
@@ -99,6 +110,7 @@ class GameControl(DirectObject):
 			self.accept(GameControl.SELECT + "-up",self.unbind )
 	
 	def controlLocation(self):
+		print 'GameControl.controlLocation'
 		self.inMenu = not self.inMenu
 		print self.inMenu
 		self.controlChange()
@@ -107,6 +119,7 @@ class GameControl(DirectObject):
 		print "Key unbinded"
 		
 	def updateResources(self, model, app):
+		print 'GameControl.updateResources'
 		self.player = model.getPlayer()
 		self.ball = model.getBall()
 		self.app = app

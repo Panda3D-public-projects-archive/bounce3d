@@ -3,6 +3,11 @@
 # messenger
 from direct.showbase.ShowBase import ShowBase 
 
+from direct.gui.DirectGui import OnscreenText
+from direct.gui.DirectGui import DirectWaitBar
+
+from pandac.PandaModules import TextNode
+
 from GameControl import GameControl
 from GameLoop import GameLoop
 
@@ -24,27 +29,36 @@ class GameApplication:
 	def __init__(self):
 	
 		self.base = ShowBase()
-		self.model = self.loop = self.keys = None
+		self.hud = self.model = self.loop = self.keys = None
 		self.mapNo = self.START_MAP
 		self.hud = Hud()
 		self.view = GameView( self.base )
 		self.keyInit = False
 		
 		# Menues
+		self.brmenu = Menu(
+			self.base,
+			["Bounce 3D"],
+			[ "Start","Highscores", "Exit"],
+			[EventType.RESTART,EventType.MENU_HS, EventType.EXIT],
+			True
+		)
 		self.mmenu = Menu(
 			self.base,
 			["Main Menu"],
-			[ "Continue", "Restart", "Highscore", "Exit"],
-			[EventType.MENU, EventType.RESTART, EventType.MENU_HS, EventType.EXIT]
+			[ "Continue", "Restart", "Highscores", "Exit"],
+			[EventType.MENU, EventType.RESTART, EventType.MENU_HS, EventType.EXIT],
+			False
 		)
 		self.hs = Menu(
 			self.base,
 			["Highscores", "***", "Test1 9:59:99", "Test2 9:59:99", "Test3 9:59:99"],
 			["Back"],
-			[EventType.MENU]
+			[EventType.MENU],
+			False
 		)
-		
-		self.menues = [self.mmenu,self.hs]
+		# In-game menues
+		self.menues = [self.brmenu,self.mmenu,self.hs]
 		
 		# http://www.panda3d.org/wiki/index.php/Event_Handlers
 		self.base.accept(EventType.UPDATE_HUD, self.hud.updateHUD) # hud event listener
@@ -65,7 +79,8 @@ class GameApplication:
 		self.base.accept(EventType.EXIT, sys.exit)
 
 		
-		messenger.send(EventType.RESTART)
+		#messenger.send(EventType.RESTART)
+		self.beforeStart()
 	
 	def getActiveMenu(self):
 		for i  in range(0,len(self.menues)-1):
@@ -80,6 +95,14 @@ class GameApplication:
 	def run(self):
 		self.base.run()
 		
+	def beforeStart(self):
+		print 'GameApplication.beforeStart'
+		self.hud.hideHUD()
+		self.model = GameModel( self.base, self.mapNo)
+		self.keys = GameControl(self.model, self,True)
+		self.brmenu.showMenu()
+		self.run()
+		
 	def _restart(self):
 		taskMgr.remove( self.SIM_TASK )
 		
@@ -92,7 +115,7 @@ class GameApplication:
 			print 'Key update'
 		else:
 			print 'Key INIT'
-			self.keys = GameControl( self.model, self )
+			self.keys = GameControl( self.model, self ,False )
 			self.keyInit = True
 		
 		messenger.send(EventType.UPDATE_HUD)

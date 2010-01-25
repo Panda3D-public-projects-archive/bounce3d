@@ -1,5 +1,5 @@
 from direct.gui.DirectGui import OnscreenText
-# from direct.gui.DirectGui import OnscreenImage
+from direct.gui.DirectGui import OnscreenImage
 
 from pandac.PandaModules import TextNode
 
@@ -11,7 +11,7 @@ from event.EventType import EventType
 class Menu:
 	
 	DEFAULT_SELECTION_POINTERS = ["-[", "]-"]
-	# BACKGROUND_IMAGE ="../media/bg_test.tif"
+	BACKGROUND_IMAGE ="../media/bg_test2.tif"
 	DEFAULT_SELECTION = -1
 	DEFAULT_VISIBILITY = False
 	
@@ -21,8 +21,10 @@ class Menu:
 		info_texts,
 		item_texts,
 		item_events,
+		img_load,
 		selection = DEFAULT_SELECTION,
-		visibility = DEFAULT_VISIBILITY
+		visibility = DEFAULT_VISIBILITY,
+		bgi = BACKGROUND_IMAGE
 	):
 		self.engine=engine
 		self.info_texts = info_texts
@@ -30,8 +32,11 @@ class Menu:
 		self.item_texts = item_texts
 		self.menu_items = []
 		self.item_events = item_events
+		self.img_load = img_load
 		self.selection = selection
 		self.visible = visibility
+		self.bgi = bgi
+		self.bg_image = None
 		
 		self.generateMenu()
 
@@ -44,6 +49,8 @@ class Menu:
 				fg = (1,1,1,1),
 				pos = (0,((len(self.info_texts) + len(self.item_texts) - self.info_texts.index(i))*0.1)),
 				align = TextNode.ACenter,
+				drawOrder = 1,
+				parent = render2d,
 				scale = 0.07
 			)
 			item.hide()
@@ -56,6 +63,8 @@ class Menu:
 				fg = (1,1,1,1),
 				pos = (0,((len(self.item_texts) - self.item_texts.index(j))*0.1)),
 				align = TextNode.ACenter,
+				drawOrder = 1,
+				parent = render2d,
 				scale = 0.07
 			)
 			item.hide()
@@ -85,6 +94,8 @@ class Menu:
 
 	def showMenu(self):
 		if not self.visible:
+			if self.img_load:
+				self.bg_image = OnscreenImage(image = self.bgi, pos = (0, 0, 0), scale = (1,1,1), parent = render2d)
 			self.visible = True
 			messenger.send(EventType.CONTROL_CHANGE)
 			for i in self.menu_items:
@@ -102,6 +113,8 @@ class Menu:
 				i.hide()
 			for j in self.info_table:
 				j.hide()
+			if self.img_load:
+				self.bg_image.destroy()
 			print "Menu unloaded"
 	
 	def getVisibility(self):

@@ -42,4 +42,8 @@ class Hud:
 		self.helpText1.setText(self.basetext + append)
 		self.helpText2.setText(Hud.COINS_TEXT + " " + str(Coin.collectable) )
 		
+	def hideHUD(self):
+		self.helpText1.hide()
+		self.helpText2.hide()
+		
 	

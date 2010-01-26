@@ -23,8 +23,9 @@ import sys
 class GameApplication:
 	
 	SIM_TASK = "Physics Simulation"
-	LOAD_TIME = 2
+	LOAD_TIME = 5
 	START_MAP = 0
+	TOGGLE_VERB = False
 	
 	def __init__(self):
 	
@@ -34,6 +35,10 @@ class GameApplication:
 		self.hud = Hud()
 		self.view = GameView( self.base )
 		self.keyInit = False
+		
+		if self.TOGGLE_VERB:
+			print 'INIT KONTROLLIT:'
+			print self.keys
 		
 		# Menues
 		self.brmenu = Menu(
@@ -57,6 +62,9 @@ class GameApplication:
 			[EventType.MENU],
 			False
 		)
+		
+		print 'HS MENU @:'
+		print self.hs
 		# In-game menues
 		self.menues = [self.brmenu,self.mmenu,self.hs]
 		
@@ -65,6 +73,10 @@ class GameApplication:
 		#messenger.send(EventType.RESTART)
 		
 	def initEvents(self):
+		if(self != None): messenger.ignoreAll(self)
+		if(self.model != None): messenger.ignoreAll(self.model)
+		if(self.keys != None): messenger.ignoreAll(self.keys)
+		
 		# http://www.panda3d.org/wiki/index.php/Event_Handlers
 		self.base.accept(EventType.UPDATE_HUD, self.hud.updateHUD) # hud event listener
 		
@@ -99,13 +111,23 @@ class GameApplication:
 	def beforeStart(self):
 		print 'GameApplication.beforeStart'
 		self.hud.hideHUD()
-		keysssss = GameControl(self.model, self)
+		self.keys = GameControl(self.model, self)
+		
+		if self.TOGGLE_VERB:
+			print 'ALOTUS KONTROLLIT:'
+			print self.keys
+		
 		self.brmenu.showMenu()
 		self.run()
 		
 	def _restart(self):
-		messenger.clear()
+	
+		if self.TOGGLE_VERB:
+			print 'RESSUTETTU, KONTROLLIT:'
+			print self.keys
+		
 		self.initEvents()
+		self.hud.showHUD()
 		taskMgr.remove( self.SIM_TASK )
 		
 		if ( self.model != None ): self.model.cleanUp()
@@ -119,6 +141,10 @@ class GameApplication:
 			print 'Key INIT'
 			self.keys = GameControl( self.model, self)
 			self.keyInit = True
+		
+		if self.TOGGLE_VERB:
+			print 'IN-GAME KONTROLLIT:'
+			print self.keys
 		
 		messenger.send(EventType.UPDATE_HUD)
 	    

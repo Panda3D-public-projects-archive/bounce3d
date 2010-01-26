@@ -22,13 +22,14 @@ class GameControl(DirectObject):
 	TURN_GRAVITY2 = "h"
 	RESTART_LEVEL = "r"
 	SELECT = "enter"
+	TOGGLE_VERB = False
 
 	def __init__(self, model, app):
 		self.player = 	self.ball = self.app = self.inMenu = self.activeMenu = None
 		self.model = model
 		
 		if (self.model != None):
-			print 'GameControl.__init__ = True'
+			#print 'GameControl.__init__ = True'
 			self.app = app
 			self.inMenu = False
 			self.activeMenu = None
@@ -37,14 +38,18 @@ class GameControl(DirectObject):
 			self.player = model.getPlayer()
 			model.isListening = True
 			self.initEvents()
-			print self.ball
+			if self.TOGGLE_VERB:
+				print self.ball
+				print self
 		else:
-			print 'GameControl.__init__ = False'
+			#print 'GameControl.__init__ = False'
 			self.app = app
 			self.bStartInit()
-		
+			if self.TOGGLE_VERB:
+				print self
+			
 	def initEvents(self):
-		print 'GameControl.initEvents'
+		#print 'GameControl.initEvents'
 		playerMoveRightOn = createNamedEvent(
 			self.player.name, EventType.PLAYER_MOVE_RIGHT_ON
 		)
@@ -89,38 +94,48 @@ class GameControl(DirectObject):
 		self.accept(GameControl.TURN_GRAVITY, self.model.turnGravityTask )
 		self.accept(GameControl.TURN_GRAVITY2, self.model.turnGravityTask2 )
 		
-		print self.ball
+		if self.TOGGLE_VERB:
+			print self.ball
+			print self
 		
 	def bStartInit(self):
-		print 'GameControl.bStartInit'
+		#print 'GameControl.bStartInit'
 		self.accept(EventType.CONTROL_CHANGE, self.controlLocation)
 	
 	def controlChange(self):
-		print 'GameControl.controlChange'
 		self.activeMenu = self.app.getActiveMenu()
+		if self.TOGGLE_VERB:
+			print self.activeMenu
+			print self.ball
+		print ' \n Aktiivinen menu:'
 		print self.activeMenu
-		print self.ball
 		
 		self.ignore(GameControl.PLAYER_UP_KEY + "-up")
 		self.ignore(GameControl.PLAYER_DOWN_KEY + "-up")
 		self.ignore(GameControl.SELECT + "-up")
-		
+		print 'KONTROLLIT >'
 		if (self.inMenu and (self.activeMenu != None)):
+			print 'MENUSSA \n'
 			self.accept(GameControl.PLAYER_UP_KEY + "-up", self.activeMenu.selectionUp)
 			self.accept(GameControl.PLAYER_DOWN_KEY + "-up", self.activeMenu.selectionDown)
 			self.accept(GameControl.SELECT + "-up", self.activeMenu.select)
 		else:
-			print 'Pallo on:'
-			print self.ball
+			print 'IN-GAME \n'
+			if self.TOGGLE_VERB:
+				print 'Pallo on:'
+				print self.ball
+				print self
 			self.accept(GameControl.PLAYER_UP_KEY + "-up", self.ball.arrowUpUp)
 			self.accept(GameControl.PLAYER_DOWN_KEY + "-up", self.ball.arrowDownUp)
 			self.accept(GameControl.SELECT + "-up",self.unbind )
 	
 	def controlLocation(self):
-		print 'GameControl.controlLocation'
+		#print 'GameControl.controlLocation'
 		self.inMenu = not self.inMenu
-		print self.inMenu
-		print self.ball
+		if self.TOGGLE_VERB:
+			print self.inMenu
+			print self.ball
+			print self
 		self.controlChange()
 		
 	def unbind(self):

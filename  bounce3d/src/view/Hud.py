@@ -45,5 +45,8 @@ class Hud:
 	def hideHUD(self):
 		self.helpText1.hide()
 		self.helpText2.hide()
-		
+	
+	def showHUD(self):
+		self.helpText1.show()
+		self.helpText2.show()
 	

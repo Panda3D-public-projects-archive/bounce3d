@@ -60,6 +60,11 @@ class GameApplication:
 		# In-game menues
 		self.menues = [self.brmenu,self.mmenu,self.hs]
 		
+		self.initEvents()
+		self.beforeStart()
+		#messenger.send(EventType.RESTART)
+		
+	def initEvents(self):
 		# http://www.panda3d.org/wiki/index.php/Event_Handlers
 		self.base.accept(EventType.UPDATE_HUD, self.hud.updateHUD) # hud event listener
 		
@@ -77,10 +82,6 @@ class GameApplication:
 		self.base.accept('d', self._toggleDebug )
 		
 		self.base.accept(EventType.EXIT, sys.exit)
-
-		
-		#messenger.send(EventType.RESTART)
-		self.beforeStart()
 	
 	def getActiveMenu(self):
 		for i  in range(0,len(self.menues)-1):
@@ -103,6 +104,8 @@ class GameApplication:
 		self.run()
 		
 	def _restart(self):
+		messenger.clear()
+		self.initEvents()
 		taskMgr.remove( self.SIM_TASK )
 		
 		if ( self.model != None ): self.model.cleanUp()

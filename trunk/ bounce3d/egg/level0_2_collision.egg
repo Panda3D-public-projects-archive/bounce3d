@@ -5,7 +5,7 @@
 }
 <Group> groundPlane_transform {
 }
-<Group> nurbsToPoly1 {
+<Group> nurbsToPoly2 {
   <VertexPool> nurbsToPolyShape1.verts {
     <Vertex> 0 {
       1.93734e-014 -228.393 -314

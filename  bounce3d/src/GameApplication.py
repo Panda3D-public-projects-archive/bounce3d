@@ -151,7 +151,8 @@ class GameApplication:
 			print self.keys
 		
 		messenger.send(EventType.UPDATE_HUD)
-	    
+	    #messenger.send(EventType.CONTROL_CHANGE)
+		
 		# http://www.panda3d.org/wiki/index.php/Tasks
 		taskMgr.doMethodLater(self.LOAD_TIME, self.loop.simulationTask, self.SIM_TASK)
 

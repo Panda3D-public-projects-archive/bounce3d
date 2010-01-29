@@ -114,7 +114,7 @@ class GameControl(DirectObject):
 		self.ignore(GameControl.PLAYER_DOWN_KEY + "-up")
 		self.ignore(GameControl.SELECT + "-up")
 		print 'KONTROLLIT >'
-		if (self.inMenu and (self.activeMenu != None)):
+		if self.activeMenu != None:
 			print 'MENUSSA \n'
 			self.accept(GameControl.PLAYER_UP_KEY + "-up", self.activeMenu.selectionUp)
 			self.accept(GameControl.PLAYER_DOWN_KEY + "-up", self.activeMenu.selectionDown)

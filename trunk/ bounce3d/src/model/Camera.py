@@ -16,7 +16,7 @@ class Camera:
 		h,p,r = self.camera.getHpr()
 		self.camera.setHpr(h,p, self.angle)
 		cx,cy,cz = self.camera.getPos()
-		self.camera.setPos( cx, y, cz ) # alter only y-axis
+		self.camera.setPos( cx, y, z*0.75 ) # alter only y-axis
 	
 	# http://www.panda3d.org/wiki/index.php/Controlling_the_Camera
 	def turnCameraTask(self, task):

@@ -1,7 +1,7 @@
 
 # taskMgr
 # messenger
-from direct.showbase.ShowBase import ShowBase 
+from direct.showbase.ShowBase import ShowBase
 
 from direct.gui.DirectGui import OnscreenText
 from direct.gui.DirectGui import DirectWaitBar
@@ -43,24 +43,27 @@ class GameApplication:
 		# Menues
 		self.brmenu = Menu(
 			self.base,
-			["Bounce 3D"],
-			[ "Start","Highscores", "Exit"],
-			[EventType.RESTART,EventType.MENU_HS, EventType.EXIT],
-			True
+			[""],
+			[ "Start", "Exit"],
+			[EventType.RESTART, EventType.EXIT],
+			True,
+			-.26
 		)
 		self.mmenu = Menu(
 			self.base,
 			["Main Menu"],
 			[ "Continue", "Restart", "Highscores", "Exit"],
 			[EventType.MENU, EventType.RESTART, EventType.MENU_HS, EventType.EXIT],
-			False
+			False,
+			0
 		)
 		self.hs = Menu(
 			self.base,
 			["Highscores", "***", "Test1 9:59:99", "Test2 9:59:99", "Test3 9:59:99"],
 			["Back"],
 			[EventType.MENU],
-			False
+			False,
+			0
 		)
 		
 		print 'HS MENU @:'

@@ -2,8 +2,12 @@ from direct.gui.DirectGui import OnscreenText
 from direct.gui.DirectGui import OnscreenImage
 
 from pandac.PandaModules import TextNode
+from pandac.PandaModules import *
+
 
 from model.GameModel import GameModel
+
+from direct.showbase import *
 
 from event.Event import createNamedEvent
 from event.EventType import EventType
@@ -11,7 +15,7 @@ from event.EventType import EventType
 class Menu:
 	
 	DEFAULT_SELECTION_POINTERS = ["-[", "]-"]
-	BACKGROUND_IMAGE ="../media/bg_test2.tif"
+	BACKGROUND_IMAGE ="../media/menuBg800x600.tif"
 	DEFAULT_SELECTION = -1
 	DEFAULT_VISIBILITY = False
 	
@@ -22,6 +26,7 @@ class Menu:
 		item_texts,
 		item_events,
 		img_load,
+		offset,
 		selection = DEFAULT_SELECTION,
 		visibility = DEFAULT_VISIBILITY,
 		bgi = BACKGROUND_IMAGE
@@ -33,10 +38,12 @@ class Menu:
 		self.menu_items = []
 		self.item_events = item_events
 		self.img_load = img_load
+		self.offset = offset
 		self.selection = selection
 		self.visible = visibility
 		self.bgi = bgi
 		self.bg_image = None
+		self.font = loader.loadFont("../media/DejaVuCondensedSansBold.ttf")
 		
 		self.generateMenu()
 
@@ -47,11 +54,12 @@ class Menu:
 				text = i,
 				style = 1,
 				fg = (1,1,1,1),
-				pos = (0,((len(self.info_texts) + len(self.item_texts) - self.info_texts.index(i))*0.1)),
+				font = self.font,
+				pos = (0,((len(self.info_texts) + len(self.item_texts) - self.info_texts.index(i))*0.1) + self.offset),
 				align = TextNode.ACenter,
 				drawOrder = 1,
 				parent = render2d,
-				scale = 0.07
+				scale = 0.1
 			)
 			item.hide()
 			self.info_table.append(item)
@@ -61,11 +69,12 @@ class Menu:
 				text = j,
 				style = 1,
 				fg = (1,1,1,1),
-				pos = (0,((len(self.item_texts) - self.item_texts.index(j))*0.1)),
+				font = self.font,
+				pos = (0,((len(self.item_texts) - self.item_texts.index(j))*0.1) + self.offset),
 				align = TextNode.ACenter,
 				drawOrder = 1,
 				parent = render2d,
-				scale = 0.07
+				scale = 0.06
 			)
 			item.hide()
 			self.menu_items.append(item)

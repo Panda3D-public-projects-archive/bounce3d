@@ -96,9 +96,13 @@ class GameApplication:
 		self.base.accept(EventType.EXIT, sys.exit)
 	
 	def getActiveMenu(self):
-		for i  in range(0,len(self.menues)-1):
+		x = -1
+		for i  in range(len(self.menues)):
 			if (self.menues[i].getVisibility()):
-				return self.menues[i]
+				x = i
+				break
+		if x != -1:
+			return self.menues[x]
 	
 	def _toggleDebug(self):
 		# http://www.panda3d.org/wiki/index.php/The_Default_Camera_Driver

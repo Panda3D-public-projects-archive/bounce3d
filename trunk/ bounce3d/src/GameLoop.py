@@ -7,7 +7,7 @@ class GameLoop:
 	def __init__(self, model):
 		self.model = model
 
-	def simulationTask(self, task):
+	def simulationTask(self, hud):
 		''' contains the main loop '''
 
 		# Setup the contact joints
@@ -20,5 +20,5 @@ class GameLoop:
 
 		# Clear the contact joints
 		self.model.contactgroup.empty()
-
+		hud.updateHUD()
 		return Task.cont

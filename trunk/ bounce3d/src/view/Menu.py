@@ -97,14 +97,13 @@ class Menu:
 			print "Menu bottom reached"
 
 	def select(self):
+		self.bgHide()
 		messenger.send(self.item_events[self.selection])
 		self.hideMenu()
 		print "Selection ", self
 
 	def showMenu(self):
 		if not self.visible:
-			if self.img_load:
-				self.bg_image = OnscreenImage(image = self.bgi, pos = (0, 0, 0), scale = (1,1,1), parent = render2d)
 			self.visible = True
 			messenger.send(EventType.CONTROL_CHANGE)
 			for i in self.menu_items:
@@ -122,9 +121,15 @@ class Menu:
 				i.hide()
 			for j in self.info_table:
 				j.hide()
-			if self.img_load:
-				self.bg_image.destroy()
 			print "Menu unloaded"
 	
 	def getVisibility(self):
 		return self.visible
+	
+	def bgHide(self, task = None):
+		if self.img_load:
+			self.bg_image.destroy()
+	
+	def bgShow(self):
+		if self.img_load:
+			self.bg_image = OnscreenImage(image = self.bgi, pos = (0, 0, 0), scale = (1,1,1), parent = render2d)

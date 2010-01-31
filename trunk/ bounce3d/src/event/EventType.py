@@ -15,5 +15,7 @@ class EventType:
 	CONTROL_HIDE = 0xff0000
 	MENU_HS = 0x0f0f0f
 	EXIT = 0xff00ff
+	BR_MENU = 0x1295ff
+	INFO_M = 0x1295fe
 	
 	ODE_COLLISION = "ode-collision"

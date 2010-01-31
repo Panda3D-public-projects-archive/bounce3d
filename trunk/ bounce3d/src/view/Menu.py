@@ -27,6 +27,7 @@ class Menu:
 		item_events,
 		img_load,
 		offset,
+		scale_factor = 1,
 		selection = DEFAULT_SELECTION,
 		visibility = DEFAULT_VISIBILITY,
 		bgi = BACKGROUND_IMAGE
@@ -41,6 +42,7 @@ class Menu:
 		self.offset = offset
 		self.selection = selection
 		self.visible = visibility
+		self.scale_factor = scale_factor
 		self.bgi = bgi
 		self.bg_image = None
 		self.font = loader.loadFont("../media/DejaVuCondensedSansBold.ttf")
@@ -59,7 +61,7 @@ class Menu:
 				align = TextNode.ACenter,
 				drawOrder = 1,
 				parent = render2d,
-				scale = 0.1
+				scale = 0.1 * self.scale_factor
 			)
 			item.hide()
 			self.info_table.append(item)
@@ -74,7 +76,7 @@ class Menu:
 				align = TextNode.ACenter,
 				drawOrder = 1,
 				parent = render2d,
-				scale = 0.06
+				scale = 0.06 * self.scale_factor
 			)
 			item.hide()
 			self.menu_items.append(item)
@@ -105,6 +107,7 @@ class Menu:
 	def showMenu(self):
 		if not self.visible:
 			self.visible = True
+			self.bgShow()
 			messenger.send(EventType.CONTROL_CHANGE)
 			for i in self.menu_items:
 				i.show()
@@ -116,6 +119,7 @@ class Menu:
 	def hideMenu(self):
 		if self.visible:
 			self.visible = False
+			self.bgHide()
 			messenger.send(EventType.CONTROL_CHANGE)
 			for i in self.menu_items:
 				i.hide()
@@ -128,6 +132,7 @@ class Menu:
 	
 	def bgHide(self, task = None):
 		if self.img_load:
+			print 'asdassdsadaasdddddsad'
 			self.bg_image.destroy()
 	
 	def bgShow(self):

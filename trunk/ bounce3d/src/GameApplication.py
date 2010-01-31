@@ -43,8 +43,8 @@ class GameApplication:
 		self.brmenu = Menu(
 			self.base,
 			[""],
-			[ "Start", "Exit"],
-			[EventType.RESTART, EventType.EXIT],
+			[ "Start","Controls","Exit"],
+			[EventType.RESTART,EventType.INFO_M, EventType.EXIT],
 			True,
 			-.26
 		)
@@ -65,10 +65,20 @@ class GameApplication:
 			0
 		)
 		
+		self.infom = Menu(
+			self.base,
+			["Controls", "***", "Arrows: Moving", "Space: Jumping", "M: In-game menu", "***"],
+			["Back"],
+			[EventType.BR_MENU],
+			True,
+			-.66,
+			0.55
+		)
+		
 		print 'HS MENU @:'
 		print self.hs
 		# In-game menues
-		self.menues = [self.brmenu,self.mmenu,self.hs]
+		self.menues = [self.brmenu,self.mmenu,self.hs,self.infom]
 		
 		self.initEvents()
 		self.beforeStart()
@@ -115,6 +125,8 @@ class GameApplication:
 		self.base.run()
 		
 	def beforeStart(self):
+		self.base.accept(EventType.BR_MENU, self.brmenu.showMenu)
+		self.base.accept(EventType.INFO_M, self.infom.showMenu)
 		print 'GameApplication.beforeStart'
 		#self.hud.hideHUD()
 		self.keys = GameControl(self.model, self)
@@ -124,7 +136,6 @@ class GameApplication:
 			print self.keys
 		
 		self.brmenu.showMenu()
-		self.brmenu.bgShow()
 		self.run()
 		
 	def initSIM_and_HUD(self, task):

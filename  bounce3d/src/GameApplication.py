@@ -128,39 +128,31 @@ class GameApplication:
 		self.run()
 		
 	def initSIM_and_HUD(self, task):
+		if (self.hud != None): self.hud.clearHUD()
 		self.hud = Hud()
 		taskMgr.doMethodLater(0, self.loop.simulationTask, self.SIM_TASK, extraArgs=[self.hud])	
 		
 	def _restart(self):
 		self.brmenu.bgShow()
-		if (self.hud != None): self.hud.clearHUD
-		if self.TOGGLE_VERB:
-			print 'RESSUTETTU, KONTROLLIT:'
-			print self.keys
 		
 		self.initEvents()
-		#self.hud.showHUD()
+		
 		taskMgr.remove( self.SIM_TASK )
 		
 		if ( self.model != None ): self.model.cleanUp()
 		
 		self.model = GameModel( self.base, self.mapNo)
 		self.loop = GameLoop( self.model )
+		
 		if(self.keyInit):
 			self.keys.updateResources( self.model, self )
-			print 'Key update'
 		else:
-			print 'Key INIT'
 			self.keys = GameControl( self.model, self)
 			self.keyInit = True
 		
 		if self.TOGGLE_VERB:
 			print 'IN-GAME KONTROLLIT:'
 			print self.keys
-		
-		#messenger.send(EventType.UPDATE_HUD)
-	    #messenger.send(EventType.CONTROL_CHANGE)
-		
 		# http://www.panda3d.org/wiki/index.php/Tasks
 		taskMgr.doMethodLater(self.LOAD_TIME -0.01, self.brmenu.bgHide, 'bg')
 		taskMgr.doMethodLater(self.LOAD_TIME, self.initSIM_and_HUD, 'sh')

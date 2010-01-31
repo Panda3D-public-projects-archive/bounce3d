@@ -78,9 +78,10 @@ class GameModel:
 		Update objects after one physics iteration
 		@see GameLoop.simulationTask
 		'''
-		self.ball.updateModelNode()
 		self.level.updateModelNode()
 		self.camera.updateModelNode()
+		#Has to be last for RESTART to work inside Ball
+		self.ball.updateModelNode()
 		
 	def getBall(self):
 		return self.ball

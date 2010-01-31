@@ -12,7 +12,7 @@ class Camera:
 		
 	def updateModelNode(self):
 		x,y,z = self.ball.getPosition()
-		self.camera.lookAt( x,y,z + 1 )
+		self.camera.lookAt( x,y,z + 3 )
 		h,p,r = self.camera.getHpr()
 		self.camera.setHpr(h,p, self.angle)
 		cx,cy,cz = self.camera.getPos()

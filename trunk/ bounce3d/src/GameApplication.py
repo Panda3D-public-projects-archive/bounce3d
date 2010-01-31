@@ -76,11 +76,19 @@ class GameApplication:
 			-.66,
 			0.55
 		)
-		
+		self.endmenu = Menu(
+			self.base,
+			["Game Over - Play again soon!"],
+			["Exit"],
+			[EventType.EXIT],
+			True,
+			-.26
+		)
+
 		print 'HS MENU @:'
 		print self.hs
 		# In-game menues
-		self.menues = [self.brmenu,self.mmenu,self.hs,self.infom]
+		self.menues = [self.brmenu,self.mmenu,self.hs,self.infom,self.endmenu]
 		
 		self.initEvents()
 		self.beforeStart()
@@ -177,8 +185,9 @@ class GameApplication:
 			self.mapNo = self.mapNo + 1
 			messenger.send(EventType.RESTART)
 		else:
-			messenger.send(EventType.EXIT)
-			#messenger.send(EventType.RESTART)
+			taskMgr.remove(self.SIM_TASK)
+			self.mapNo = 0
+			self.endmenu.showMenu()
 			
 
 if __name__ == "__main__":

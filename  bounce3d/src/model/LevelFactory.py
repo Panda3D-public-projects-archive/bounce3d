@@ -23,12 +23,32 @@ class LevelFactory:
 
 		if(mapNo == 0):
 			level.ball.setPosition( (0.0,-20.0,10.0) )
-			level.addExit( (0.0, 60.0, 7.0) )
+			level.addCoin( (0.0, -5.1, 4.9) )
+			level.addCoin( (0.0, 10.0, 3.1) )
+			level.addCoin( (0.0, 32.1, 2.1) )
+			level.addCoin( (0.0, 35.7, 5.1) )
+			level.addCoin( (0.0, 31.5, 9.2) )
+			level.addCoin( (0.0, 38.4, 17.1) )
+			level.addCoin( (0.0, 43.7, 1.9) )
+			level.addCoin( (0.0, 58.0, 1.9) )
+			level.addCoin( (0.0, 66.3, 6.0) )
+			level.addCoin( (0.0, 55.8, 7.2) )
+			level.addCoin( (0.0, 90.9, 4.0) )
+			level.addCoin( (0.0, 130.8, 7.4) )
+			level.addCoin( (0.0, 152.1, 4.1) )
+			level.addExit( (0.0, 156.0, 9.4) )
 			level.loadLevelEntity( self.MODEL_EGG[mapNo], self.COLLISION_EGG[mapNo] )
 			
 		elif (mapNo == 1):
 			level.ball.setPosition( (0.0,-20.0,10.0) )
-			level.addExit( (0.0,60.0,7.0) )
+			level.addCoin( (0.0, 18.4, .5) )
+			level.addCoin( (0.0, 69.6, -29.2) )
+			level.addCoin( (0.0, 152.3, -95.1) )
+			level.addCoin( (0.0, 185.9, -96.1) )
+			level.addCoin( (0.0, 263.9, -173.0) )
+			level.addCoin( (0.0, 309.0, -209.2) )
+			level.addCoin( (0.0, 373.0, -223.7) )
+			level.addExit( (0.0, 414.1, -222.2) )
 			level.loadLevelEntity( self.MODEL_EGG[mapNo], self.COLLISION_EGG[mapNo] )
 			
 		elif(mapNo == 2):

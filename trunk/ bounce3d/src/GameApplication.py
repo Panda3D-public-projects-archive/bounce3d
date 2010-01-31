@@ -174,7 +174,9 @@ class GameApplication:
 			messenger.send(EventType.RESTART)
 		else:
 			self.mapNo = 0
-			messenger.send(EventType.RESTART)
+			self.initEvents()
+			self.beforeStart()
+			#messenger.send(EventType.RESTART)
 			
 
 if __name__ == "__main__":

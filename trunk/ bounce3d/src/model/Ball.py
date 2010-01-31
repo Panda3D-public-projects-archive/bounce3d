@@ -405,6 +405,7 @@ class Ball:
 		body.setQuaternion(Quat(newQuat))
 	
 	def getPosition( self ):
+		print self.ballBody.getPosition()
 		return self.ballBody.getPosition()
 	
 	def setPosition( self, pos):

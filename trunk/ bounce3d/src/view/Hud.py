@@ -34,6 +34,7 @@ class Hud:
 		self.helpText2 = OnscreenText(
 			text = Hud.COINS_TEXT,
 			style = 2,
+			font = self.font,
 			fg = (1,1,1,1),
 			pos = ( -1.25, -0.85 ),
 			align = TextNode.ALeft,
@@ -57,7 +58,8 @@ class Hud:
 	def updateHUD(self, append=DEFAULT_APPEND):
 		if Hud.DEBUG:
 			self.helpText1.setText(self.basetext + append)
-			self.helpText2.setText(Hud.COINS_TEXT + " " + str(Coin.collectable) )
+		
+		self.helpText2.setText(Hud.COINS_TEXT + " " + str(Coin.collectable) )
 		
 		# http://www.panda3d.org/phpbb2/viewtopic.php?t=2630
 		# http://www.panda3d.org/phpbb2/viewtopic.php?t=315
@@ -75,18 +77,18 @@ class Hud:
 	def hideHUD(self):
 		if Hud.DEBUG:
 			self.helpText1.hide()
-			self.helpText2.hide()
+		self.helpText2.hide()
 		self.helpText3.hide()
 	
 	def showHUD(self):
 		if Hud.DEBUG:
 			self.helpText1.show()
-			self.helpText2.show()
+		self.helpText2.show()
 		self.helpText3.show()
 	
 	def clearHUD(self):
 		self.hideHUD
 		if Hud.DEBUG:
 			self.helpText1.destroy()
-			self.helpText2.destroy()
+		self.helpText2.destroy()
 		self.helpText3.destroy()

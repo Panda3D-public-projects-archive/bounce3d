@@ -12,8 +12,8 @@ class GameView:
 		self.engine.disableMouse()
 		self.engine.camera.lookAt(0, 0, 6)
 		self.engine.setBackgroundColor(0,0.3,0.5)
-		self.engine.camera.setPos(40, 0, 2)
-		self.setLights()
+		self.engine.camera.setPos(60, 0, 3)
+		#self.setLights()
 		
 	def setLights(self):
 		# Ambient Light

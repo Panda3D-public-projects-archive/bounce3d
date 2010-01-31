@@ -9,11 +9,9 @@ from pandac.PandaModules import VBase3
 
 from direct.directtools.DirectGeometry import LineNodePath
 
-# from direct.directbase.DirectStart import *
-
-#from direct.showbase.
-
 from model.SurfaceType import SurfaceType
+
+from event.EventType import EventType
 
 class Ball:
 	
@@ -51,6 +49,8 @@ class Ball:
 	):
 		self.limitedYMovement = False
 		self.limitedYCoords = [-1,-1]
+		self.limitedZMovement = False
+		self.limitedZCoords = [-1,-1]
 		self.name = name
 		self.pos = pos
 		self.hpr = hpr
@@ -300,11 +300,17 @@ class Ball:
 			return True
 		return False
 		
-	def limitMovement(self, ymin, ymax):
+	def limitYMovement(self, ymin, ymax):
 		if ymin >= ymax:
 			return
 		self.limitedYMovement = True
 		self.limitedYCoords = [ymin, ymax]
+	
+	def limitZMovement(self, zmin, zmax):
+		if zmin >= zmax:
+			return
+		self.limitedZMovement = True
+		self.limitedZCoords = [zmin, zmax]
 	
 	def updateModelNode(self):
 		''' Update objects after one physics iteration '''		
@@ -317,6 +323,13 @@ class Ball:
 				self.ballBody.setLinearVel(Vec3(0,-10,0))
 			if body.getPosition().getY() < self.limitedYCoords[0]:
 				self.ballBody.setLinearVel(Vec3(0,10,0))
+		if self.limitedZMovement:
+			if body.getPosition().getZ() > self.limitedZCoords[1]:
+				messenger.send(EventType.RESTART)
+				return
+			if body.getPosition().getZ() < self.limitedZCoords[0]:
+				messenger.send(EventType.RESTART)
+				return
 		
 		if Ball.MOVEMENT_DEBUG and now - self.lastDrawTime2 > 0.2:
 			v = body.getLinearVel()
@@ -405,7 +418,6 @@ class Ball:
 		body.setQuaternion(Quat(newQuat))
 	
 	def getPosition( self ):
-		print self.ballBody.getPosition()
 		return self.ballBody.getPosition()
 	
 	def setPosition( self, pos):

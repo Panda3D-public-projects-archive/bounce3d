@@ -31,15 +31,15 @@ class Hud:
 			)
 			self.helpText1.show()
 			
-			self.helpText2 = OnscreenText(
-				text = Hud.COINS_TEXT,
-				style = 2,
-				fg = (1,1,1,1),
-				pos = ( -1.25, -0.85 ),
-				align = TextNode.ALeft,
-				scale = 0.07
-			)
-			self.helpText2.show()
+		self.helpText2 = OnscreenText(
+			text = Hud.COINS_TEXT,
+			style = 2,
+			fg = (1,1,1,1),
+			pos = ( -1.25, -0.85 ),
+			align = TextNode.ALeft,
+			scale = 0.07
+		)
+		self.helpText2.show()
 			
 		self.helpText3 = OnscreenText(
 		    text = Hud.TIMER_TEXT + ' 00:00',

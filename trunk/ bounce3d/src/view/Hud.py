@@ -12,35 +12,39 @@ class Hud:
 	COINS_TEXT = "Collect coins:"
 	TIMER_TEXT = "Time: "
 	DEFAULT_APPEND = ""
+	DEBUG = False
 	
 	def __init__(self, basetext = DEFAULT):
 		self.time = ClockObject()
 		self.basetext = basetext
+		self.font = loader.loadFont("../media/DejaVuCondensedSansBold.ttf")
 		
-		# Add a text on the screen.
-		self.helpText1 = OnscreenText(
-			text = self.basetext,
-			style = 1,
-			fg = (1,1,1,1),
-			pos = (-1.25,0.85),
-			align = TextNode.ALeft,
-			scale = 0.07
-		)
-		self.helpText1.show()
-		
-		self.helpText2 = OnscreenText(
-		    text = Hud.COINS_TEXT,
-		    style = 2,
-		    fg = (1,1,1,1),
-		    pos = ( -1.25, -0.85 ),
-		    align = TextNode.ALeft,
-		    scale = 0.07
-		)
-		self.helpText2.show()
-		
+		if Hud.DEBUG:
+			# Add a text on the screen.
+			self.helpText1 = OnscreenText(
+				text = self.basetext,
+				style = 1,
+				fg = (1,1,1,1),
+				pos = (-1.25,0.85),
+				align = TextNode.ALeft,
+				scale = 0.07
+			)
+			self.helpText1.show()
+			
+			self.helpText2 = OnscreenText(
+				text = Hud.COINS_TEXT,
+				style = 2,
+				fg = (1,1,1,1),
+				pos = ( -1.25, -0.85 ),
+				align = TextNode.ALeft,
+				scale = 0.07
+			)
+			self.helpText2.show()
+			
 		self.helpText3 = OnscreenText(
 		    text = Hud.TIMER_TEXT + ' 00:00',
 		    style = 2,
+			font = self.font,
 		    fg = (1,1,1,1),
 		    pos = ( 0.8, -0.85 ),
 		    align = TextNode.ALeft,
@@ -51,8 +55,9 @@ class Hud:
 		self.updateHUD()
 		
 	def updateHUD(self, append=DEFAULT_APPEND):
-		self.helpText1.setText(self.basetext + append)
-		self.helpText2.setText(Hud.COINS_TEXT + " " + str(Coin.collectable) )
+		if Hud.DEBUG:
+			self.helpText1.setText(self.basetext + append)
+			self.helpText2.setText(Hud.COINS_TEXT + " " + str(Coin.collectable) )
 		
 		# http://www.panda3d.org/phpbb2/viewtopic.php?t=2630
 		# http://www.panda3d.org/phpbb2/viewtopic.php?t=315
@@ -68,18 +73,20 @@ class Hud:
 
 	
 	def hideHUD(self):
-		self.helpText1.hide()
-		self.helpText2.hide()
+		if Hud.DEBUG:
+			self.helpText1.hide()
+			self.helpText2.hide()
 		self.helpText3.hide()
 	
 	def showHUD(self):
-		self.helpText1.show()
-		self.helpText2.show()
+		if Hud.DEBUG:
+			self.helpText1.show()
+			self.helpText2.show()
 		self.helpText3.show()
 	
 	def clearHUD(self):
 		self.hideHUD
-		print 'ASDASDMKLLKSSMDKKLKLMLKAKLDAKL'
-		self.helpText1.destroy()
-		self.helpText2.destroy()
+		if Hud.DEBUG:
+			self.helpText1.destroy()
+			self.helpText2.destroy()
 		self.helpText3.destroy()

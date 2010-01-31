@@ -101,7 +101,7 @@ class Level:
 		return self.goal
 		
 	def addCoin( self, pos ):
-		self._coins.append( Coin(self.world, self.space, pos ) )
+		self._coins.append( Coin(self.model, self.world, self.space, pos ) )
 	
 	def getCoins( self ):
 		return self._coins

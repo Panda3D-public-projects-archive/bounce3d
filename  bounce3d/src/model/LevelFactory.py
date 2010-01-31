@@ -60,6 +60,8 @@ class LevelFactory:
 			raise Error
 			
 	def _TestLevel(self, level):
+		level.ball.limitYMovement(-30.0,30.0)
+		level.ball.limitZMovement(-30.0,30.0)
 		level.ball.setPosition( (0.0, 1.0, 1.0) )
 		
 		dim = (2.0, 5.0, 0.5)

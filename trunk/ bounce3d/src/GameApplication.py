@@ -26,6 +26,7 @@ class GameApplication:
 	LOAD_TIME = 5
 	START_MAP = 0
 	TOGGLE_VERB = False
+	BG_MUSIC = "../media/Stereo.mp3"
 	
 	def __init__(self):
 	
@@ -34,6 +35,7 @@ class GameApplication:
 		self.mapNo = self.START_MAP
 		self.view = GameView( self.base )
 		self.keyInit = False
+		self.bg_music = loader.loadSfx(GameApplication.BG_MUSIC)
 		
 		if self.TOGGLE_VERB:
 			print 'INIT KONTROLLIT:'
@@ -106,6 +108,8 @@ class GameApplication:
 		self.base.accept('d', self._toggleDebug )
 		
 		self.base.accept(EventType.EXIT, sys.exit)
+		
+		self.base.playMusic(self.bg_music, looping = 1)
 	
 	def getActiveMenu(self):
 		x = -1
@@ -173,9 +177,7 @@ class GameApplication:
 			self.mapNo = self.mapNo + 1
 			messenger.send(EventType.RESTART)
 		else:
-			self.mapNo = 0
-			self.initEvents()
-			self.beforeStart()
+			messenger.send(EventType.EXIT)
 			#messenger.send(EventType.RESTART)
 			
 

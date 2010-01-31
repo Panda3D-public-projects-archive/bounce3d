@@ -32,7 +32,6 @@ class GameApplication:
 		self.base = ShowBase()
 		self.hud = self.model = self.loop = self.keys = None
 		self.mapNo = self.START_MAP
-		self.hud = Hud()
 		self.view = GameView( self.base )
 		self.keyInit = False
 		
@@ -81,7 +80,7 @@ class GameApplication:
 		if(self.keys != None): messenger.ignoreAll(self.keys)
 		
 		# http://www.panda3d.org/wiki/index.php/Event_Handlers
-		self.base.accept(EventType.UPDATE_HUD, self.hud.updateHUD) # hud event listener
+		if( self.hud != None ): self.base.accept(EventType.UPDATE_HUD, self.hud.updateHUD) # hud event listener
 		
 		self.base.accept(EventType.MENU, self.mmenu.showMenu) # Menu event listener
 		self.base.accept('m', self.mmenu.showMenu)
@@ -117,7 +116,7 @@ class GameApplication:
 		
 	def beforeStart(self):
 		print 'GameApplication.beforeStart'
-		self.hud.hideHUD()
+		#self.hud.hideHUD()
 		self.keys = GameControl(self.model, self)
 		
 		if self.TOGGLE_VERB:
@@ -125,20 +124,26 @@ class GameApplication:
 			print self.keys
 		
 		self.brmenu.showMenu()
+		self.brmenu.bgShow()
 		self.run()
 		
+	def initSIM_and_HUD(self, task):
+		self.hud = Hud()
+		taskMgr.doMethodLater(0, self.loop.simulationTask, self.SIM_TASK, extraArgs=[self.hud])	
+		
 	def _restart(self):
-	
+		self.brmenu.bgShow()
+		if (self.hud != None): self.hud.clearHUD
 		if self.TOGGLE_VERB:
 			print 'RESSUTETTU, KONTROLLIT:'
 			print self.keys
 		
 		self.initEvents()
-		self.hud.showHUD()
+		#self.hud.showHUD()
 		taskMgr.remove( self.SIM_TASK )
 		
 		if ( self.model != None ): self.model.cleanUp()
-		    
+		
 		self.model = GameModel( self.base, self.mapNo)
 		self.loop = GameLoop( self.model )
 		if(self.keyInit):
@@ -153,11 +158,12 @@ class GameApplication:
 			print 'IN-GAME KONTROLLIT:'
 			print self.keys
 		
-		messenger.send(EventType.UPDATE_HUD)
+		#messenger.send(EventType.UPDATE_HUD)
 	    #messenger.send(EventType.CONTROL_CHANGE)
 		
 		# http://www.panda3d.org/wiki/index.php/Tasks
-		taskMgr.doMethodLater(self.LOAD_TIME, self.loop.simulationTask, self.SIM_TASK)
+		taskMgr.doMethodLater(self.LOAD_TIME -0.01, self.brmenu.bgHide, 'bg')
+		taskMgr.doMethodLater(self.LOAD_TIME, self.initSIM_and_HUD, 'sh')
 
 	def _nextLevel(self):
 		if (self.mapNo < 2):

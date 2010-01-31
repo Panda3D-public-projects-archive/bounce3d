@@ -8,7 +8,7 @@ class Hud:
 	'''
 		a stylished text is placed on the screen.
 	'''
-	DEFAULT = "Jump [SPACE], moving [ARROWS], turn gravity [g/h], degub mode [d]"
+	DEFAULT = "Jump [SPACE], moving [ARROWS]" #append "turn gravity [g/h], degub mode [d]")
 	COINS_TEXT = "Collect coins:"
 	TIMER_TEXT = "Time: "
 	DEFAULT_APPEND = ""

@@ -20,8 +20,9 @@ class LevelFactory:
 		pass
 		
 	def load( self, level, mapNo ):
-
 		if(mapNo == 0):
+			level.ball.limitYMovement(-33.0,162.0)
+			level.ball.limitZMovement(-30.0,50.0)
 			level.ball.setPosition( (0.0,-20.0,10.0) )
 			level.addCoin( (0.0, -5.1, 4.9) )
 			level.addCoin( (0.0, 10.0, 3.1) )
@@ -38,8 +39,10 @@ class LevelFactory:
 			level.addCoin( (0.0, 152.1, 4.1) )
 			level.addExit( (0.0, 156.0, 9.4) )
 			level.loadLevelEntity( self.MODEL_EGG[mapNo], self.COLLISION_EGG[mapNo] )
-			
+
 		elif (mapNo == 1):
+			level.ball.limitYMovement(-28.0,432.0)
+			level.ball.limitZMovement(-290.0,50.0)
 			level.ball.setPosition( (0.0,-20.0,10.0) )
 			level.addCoin( (0.0, 18.4, .5) )
 			level.addCoin( (0.0, 69.6, -29.2) )

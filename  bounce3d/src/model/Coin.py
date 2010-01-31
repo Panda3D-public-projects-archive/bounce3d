@@ -34,7 +34,6 @@ class Coin:
 	def onCollide(self, entry):
 		body1 = entry.getFromNodePath()
 		ballNode = self.model.getBall().getModelNode()
-		print ballNode
 		if ballNode and ballNode == body1.getParent():
 			self.collect()
 
